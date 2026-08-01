@@ -44,61 +44,71 @@ export default function Contact() {
   }
 
   return (
-    <section className="mx-auto max-w-2xl px-6 py-20">
-      <h1 className="text-4xl font-bold tracking-tight">Contact me</h1>
-      <p className="mt-4 text-lg text-zinc-600">
-        Send me a note — this form posts to a Node.js API route I wrote.
-      </p>
+    <section className="relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="orb absolute -left-24 -top-24 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl" />
+        <div className="orb absolute -right-16 top-10 h-80 w-80 rounded-full bg-fuchsia-500/20 blur-3xl" style={{ animationDelay: "1.5s" }} />
+        <div className="absolute inset-0 bg-grid [mask-image:radial-gradient(70%_60%_at_50%_30%,#000,transparent)]" />
+      </div>
 
-      <form onSubmit={handleSubmit} className="mt-10 flex flex-col gap-5">
-        <label className="flex flex-col gap-2 text-sm font-medium">
-          Name
-          <input
-            name="name"
-            required
-            className="rounded-lg border border-zinc-300 px-4 py-3 text-base"
-            placeholder="Your name"
-          />
-        </label>
-        <label className="flex flex-col gap-2 text-sm font-medium">
-          Email
-          <input
-            name="email"
-            type="email"
-            required
-            className="rounded-lg border border-zinc-300 px-4 py-3 text-base"
-            placeholder="you@example.com"
-          />
-        </label>
-        <label className="flex flex-col gap-2 text-sm font-medium">
-          Message
-          <textarea
-            name="message"
-            required
-            rows={5}
-            className="rounded-lg border border-zinc-300 px-4 py-3 text-base"
-            placeholder="Say hello..."
-          />
-        </label>
+      <div className="mx-auto max-w-2xl px-6 py-20">
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+          <span className="text-gradient">Contact me</span>
+        </h1>
+        <p className="mt-4 text-lg text-zinc-600">
+          Send me a note — this form posts to a Node.js API route I wrote.
+        </p>
 
-        <button
-          type="submit"
-          disabled={status === "sending"}
-          className="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
-        >
-          {status === "sending" ? "Sending..." : "Send message"}
-        </button>
+        <form onSubmit={handleSubmit} className="mt-10 flex flex-col gap-5">
+          <label className="flex flex-col gap-2 text-sm font-medium">
+            Name
+            <input
+              name="name"
+              required
+              className="rounded-lg border border-zinc-300 bg-white/70 px-4 py-3 text-base outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
+              placeholder="Your name"
+            />
+          </label>
+          <label className="flex flex-col gap-2 text-sm font-medium">
+            Email
+            <input
+              name="email"
+              type="email"
+              required
+              className="rounded-lg border border-zinc-300 bg-white/70 px-4 py-3 text-base outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
+              placeholder="you@example.com"
+            />
+          </label>
+          <label className="flex flex-col gap-2 text-sm font-medium">
+            Message
+            <textarea
+              name="message"
+              required
+              rows={5}
+              className="rounded-lg border border-zinc-300 bg-white/70 px-4 py-3 text-base outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
+              placeholder="Say hello..."
+            />
+          </label>
 
-        {message && (
-          <p
-            className={`text-sm font-medium ${
-              status === "error" ? "text-red-600" : "text-green-600"
-            }`}
+          <button
+            type="submit"
+            disabled={status === "sending"}
+            className="btn-primary disabled:opacity-50"
           >
-            {message}
-          </p>
-        )}
-      </form>
+            {status === "sending" ? "Sending..." : "Send message"}
+          </button>
+
+          {message && (
+            <p
+              className={`text-sm font-medium ${
+                status === "error" ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              {message}
+            </p>
+          )}
+        </form>
+      </div>
     </section>
   );
 }
