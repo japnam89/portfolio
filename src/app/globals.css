@@ -20,9 +20,84 @@
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(45% 35% at 12% 0%, rgba(59, 130, 246, 0.12), transparent 60%),
+    radial-gradient(45% 35% at 88% 8%, rgba(168, 85, 247, 0.12), transparent 60%),
+    var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* --- Theme polish: gradients, glass, gradient text, buttons (part D) --- */
+
+/* Gradient brand text (used for the name / accents). */
+.text-gradient {
+  background: linear-gradient(100deg, #3b82f6 0%, #8b5cf6 45%, #ec4899 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Glass card surface. */
+.glass {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* Primary / ghost buttons, shared across pages. */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: linear-gradient(100deg, #2563eb, #7c3aed);
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  box-shadow: 0 10px 30px -10px rgba(37, 99, 235, 0.6);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow: 0 16px 40px -12px rgba(37, 99, 235, 0.7);
+}
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid rgba(120, 120, 130, 0.4);
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: inherit;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.btn-ghost:hover {
+  background: rgba(120, 120, 130, 0.1);
+  border-color: rgba(120, 120, 130, 0.7);
+  transform: translateY(-2px);
+}
+
+/* Soft decorative grid for heroes. */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(120, 120, 130, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(120, 120, 130, 0.08) 1px, transparent 1px);
+  background-size: 38px 38px;
+}
+
+/* Animated gradient orb. */
+@keyframes float-orb {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(14px, -18px) scale(1.08); }
+}
+.orb {
+  animation: float-orb 9s ease-in-out infinite;
 }
 
 /* --- Visual polish: entrance animation + dark hero (part C) --- */
