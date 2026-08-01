@@ -56,9 +56,4 @@ export const certificates: Certificate[] = [
     year: "2024",
     link: "https://learn.microsoft.com/en-us/credentials/",
   },
-  {
-    name: "Microsoft Certified: DevOps Engineer Expert",
-    issuer: "Microsoft",
-    year: "2023",
-  },
 ];
