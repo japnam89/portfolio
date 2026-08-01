@@ -1,4 +1,4 @@
-import { certificates } from "@/data/certificates";
+import { certificates, LINKEDIN_CERTS_URL } from "@/data/certificates";
 
 // "/certificates". Reads the certificate list from src/data/certificates.ts.
 export default function Certificates() {
@@ -30,6 +30,16 @@ export default function Certificates() {
                 className="mt-2 shrink-0 text-sm font-medium text-blue-600 hover:underline sm:mt-0"
               >
                 Verify ↗
+              </a>
+            )}
+            {!cert.link && (
+              <a
+                href={LINKEDIN_CERTS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 shrink-0 text-sm font-medium text-blue-600 hover:underline sm:mt-0"
+              >
+                LinkedIn ↗
               </a>
             )}
           </li>
