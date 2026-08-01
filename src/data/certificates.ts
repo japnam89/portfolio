@@ -11,20 +11,29 @@ export type Certificate = {
   issuer: string;
   year?: string; // e.g. "2023"
   link?: string; // optional explicit verify URL; falls back to LinkedIn certs view
+  image?: string; // optional badge image URL (Credly/Microsoft badge art)
 };
 
-// Confirmed from Microsoft Learn / Credly share links:
-//   51961FDE145F32E7 — Azure AI Engineer Associate (2026-06-27)
-//   6D6ECFBC714FC41C — Azure AI Fundamentals (2024-06-23)
+// Confirmed from Microsoft Learn / Credly share links, ordered ascending by year:
 //   8ea1b77a-...      — Azure Fundamentals (2021-07-07, Credly)
 //   d4095f57-...      — Exam 483: Programming in C# (2021-01-18, Credly)
+//   6D6ECFBC714FC41C — Azure AI Fundamentals (2024-06-23)
+//   51961FDE145F32E7 — Azure AI Engineer Associate (2026-06-27)
 //   29513636-...      — AI Skills Fest 2026 (2026-06-19, Credly)
 export const certificates: Certificate[] = [
   {
-    name: "Microsoft Certified: Azure AI Engineer Associate",
+    name: "Microsoft Certified: Azure Fundamentals",
     issuer: "Microsoft",
-    year: "2026",
-    link: "https://learn.microsoft.com/en-us/users/JapnamSingh-7668/credentials/51961FDE145F32E7",
+    year: "2021",
+    link: "https://www.credly.com/badges/8ea1b77a-84ea-4cb0-8235-7cb880305cc6",
+    image: "https://images.credly.com/size/340x340/images/be8fcaeb-c769-4858-b567-ffaaa73ce8cf/image.png",
+  },
+  {
+    name: "Exam 483: Programming in C#",
+    issuer: "Microsoft",
+    year: "2021",
+    link: "https://www.credly.com/badges/d4095f57-2ea1-48d7-851b-13070c97c1cd",
+    image: "https://images.credly.com/size/340x340/images/78e39333-d0db-4931-b231-13bdb37040cc/Programming_in_C_23-01.png",
   },
   {
     name: "Microsoft Certified: Azure AI Fundamentals",
@@ -33,27 +42,22 @@ export const certificates: Certificate[] = [
     link: "https://learn.microsoft.com/en-us/users/JapnamSingh-7668/credentials/6D6ECFBC714FC41C",
   },
   {
-    name: "Microsoft Certified: Azure Fundamentals",
+    name: "Microsoft Certified: Azure Solutions Architect Expert",
     issuer: "Microsoft",
-    year: "2021",
-    link: "https://www.credly.com/badges/8ea1b77a-84ea-4cb0-8235-7cb880305cc6",
-  },
-  {
-    name: "Exam 483: Programming in C#",
-    issuer: "Microsoft",
-    year: "2021",
-    link: "https://www.credly.com/badges/d4095f57-2ea1-48d7-851b-13070c97c1cd",
+    year: "2024",
+    link: "https://learn.microsoft.com/en-us/credentials/",
   },
   {
     name: "AI Skills Fest 2026",
     issuer: "Microsoft",
     year: "2026",
     link: "https://www.credly.com/badges/29513636-e72a-4d0c-b5df-8a5c34b1ff55",
+    image: "https://images.credly.com/size/340x340/images/082c8d0c-5232-4597-b6c4-6bebcc4f3046/blob",
   },
   {
-    name: "Microsoft Certified: Azure Solutions Architect Expert",
+    name: "Microsoft Certified: Azure AI Engineer Associate",
     issuer: "Microsoft",
-    year: "2024",
-    link: "https://learn.microsoft.com/en-us/credentials/",
+    year: "2026",
+    link: "https://learn.microsoft.com/en-us/users/JapnamSingh-7668/credentials/51961FDE145F32E7",
   },
 ];

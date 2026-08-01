@@ -10,7 +10,10 @@ const nextConfig: NextConfig = {
   // set correctly in case optimization is toggled on later.
   // Host from your share URL: rustfs-dkgj.srv1865422.hstgr.cloud
   images: {
-    remotePatterns: [{ protocol: "https", hostname: "**.srv1865422.hstgr.cloud" }],
+    remotePatterns: [
+      { protocol: "https", hostname: "**.srv1865422.hstgr.cloud" },
+      { protocol: "https", hostname: "images.credly.com" },
+    ],
   },
 
   // --- Hostinger deployment ---
