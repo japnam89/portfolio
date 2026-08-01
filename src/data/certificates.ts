@@ -13,11 +13,10 @@ export type Certificate = {
   link?: string; // optional explicit verify URL; falls back to LinkedIn certs view
 };
 
-// Confirmed from Microsoft Learn share links:
+// Confirmed from Microsoft Learn / Credly share links:
 //   51961FDE145F32E7 — Azure AI Engineer Associate (2026-06-27)
 //   6D6ECFBC714FC41C — Azure AI Fundamentals (2024-06-23)
-// The two Azure Expert certs below were already in the portfolio; confirm they
-// are still current on your LinkedIn and add/remove as needed.
+//   8ea1b77a-...      — Azure Fundamentals (2021-07-07, Credly)
 export const certificates: Certificate[] = [
   {
     name: "Microsoft Certified: Azure AI Engineer Associate",
@@ -30,6 +29,12 @@ export const certificates: Certificate[] = [
     issuer: "Microsoft",
     year: "2024",
     link: "https://learn.microsoft.com/en-us/users/JapnamSingh-7668/credentials/6D6ECFBC714FC41C",
+  },
+  {
+    name: "Microsoft Certified: Azure Fundamentals",
+    issuer: "Microsoft",
+    year: "2021",
+    link: "https://www.credly.com/badges/8ea1b77a-84ea-4cb0-8235-7cb880305cc6",
   },
   {
     name: "Microsoft Certified: Azure Solutions Architect Expert",
