@@ -17,6 +17,7 @@ export type Certificate = {
 //   51961FDE145F32E7 — Azure AI Engineer Associate (2026-06-27)
 //   6D6ECFBC714FC41C — Azure AI Fundamentals (2024-06-23)
 //   8ea1b77a-...      — Azure Fundamentals (2021-07-07, Credly)
+//   d4095f57-...      — Exam 483: Programming in C# (2021-01-18, Credly)
 export const certificates: Certificate[] = [
   {
     name: "Microsoft Certified: Azure AI Engineer Associate",
@@ -35,6 +36,12 @@ export const certificates: Certificate[] = [
     issuer: "Microsoft",
     year: "2021",
     link: "https://www.credly.com/badges/8ea1b77a-84ea-4cb0-8235-7cb880305cc6",
+  },
+  {
+    name: "Exam 483: Programming in C#",
+    issuer: "Microsoft",
+    year: "2021",
+    link: "https://www.credly.com/badges/d4095f57-2ea1-48d7-851b-13070c97c1cd",
   },
   {
     name: "Microsoft Certified: Azure Solutions Architect Expert",
