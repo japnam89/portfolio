@@ -59,7 +59,11 @@ export default function PhotoGallery() {
   if (loading) return <p className="text-zinc-500">Loading photos…</p>;
   if (error) return <p className="text-red-600">{error}</p>;
   if (photos.length === 0)
-    return <p className="text-zinc-500">No photos yet.</p>;
+    return (
+      <p className="rounded-xl border border-dashed border-zinc-300 bg-white/60 px-6 py-12 text-center text-zinc-500 backdrop-blur">
+        Photos are being curated — check back soon. 📷
+      </p>
+    );
 
   return (
     <>

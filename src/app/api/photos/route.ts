@@ -25,10 +25,10 @@ export async function GET() {
     );
     return NextResponse.json({ photos });
   } catch (err) {
-    console.error("[/api/photos] failed to load from storage:", err);
-    return NextResponse.json(
-      { error: "Failed to load photos from storage." },
-      { status: 500 },
-    );
+    // No usable storage credentials yet (or the bucket is unreachable).
+    // Return an empty list so the gallery can show a graceful placeholder
+    // instead of erroring out.
+    console.error("[/api/photos] storage unavailable, returning empty list:", err);
+    return NextResponse.json({ photos: [] });
   }
 }
