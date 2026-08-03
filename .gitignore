@@ -42,3 +42,4 @@ next-env.d.ts
 
 # local demo env (contains presigned token, never commit)
 .demoenv
+core
