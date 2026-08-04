@@ -17,8 +17,14 @@ const secretAccessKey = process.env.RUSTFS_SECRET_KEY ?? process.env.RUSTFS_SECR
 const sessionToken = process.env.RUSTFS_SESSION_TOKEN;
 const expires = Number(process.env.RUSTFS_URL_EXPIRES ?? 3600);
 
-if (!accessKeyId || !secretAccessKey) {
-  throw new Error("RustFS env vars missing. Set RUSTFS_ACCESS_KEY / RUSTFS_SECRET_KEY (and RUSTFS_ENDPOINT, RUSTFS_SESSION_TOKEN).");
+// NOTE: credential validation is intentionally deferred to request time (inside
+// `presign`), NOT at module load. Throwing here would crash `next build`
+// during "Collecting page data" even for the dynamic /api/photos route, which
+// is built to degrade gracefully when storage is unavailable.
+function requireCreds() {
+  if (!accessKeyId || !secretAccessKey) {
+    throw new Error("RustFS env vars missing. Set RUSTFS_ACCESS_KEY / RUSTFS_SECRET_KEY (and RUSTFS_ENDPOINT, RUSTFS_SESSION_TOKEN).");
+  }
 }
 
 // Parse host:port from the endpoint for SigV4 host signing.
@@ -29,6 +35,7 @@ const IMAGE_RE = /\.(jpe?g|png|webp|gif|avif|bmp)$/i;
 
 // Presign with aws4. Path-style, bucket at root (key already includes prefix).
 function presign(key: string, xId = "GetObject"): string {
+  requireCreds();
   const signed = aws4.sign({
     accessKeyId,
     secretAccessKey,
