@@ -43,3 +43,7 @@ next-env.d.ts
 # local demo env (contains presigned token, never commit)
 .demoenv
 core
+
+# python caches
+scripts/__pycache__/
+__pycache__/
