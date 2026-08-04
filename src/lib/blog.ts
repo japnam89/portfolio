@@ -75,7 +75,7 @@ export function createPost(input: {
   let unique = slug;
   let n = 1;
   while (getPost(unique)) unique = `${slug}-${n++}`;
-  const info = db
+  db
     .prepare(
       `INSERT INTO posts (slug, title, excerpt, content, cover)
        VALUES (@slug, @title, @excerpt, @content, @cover)`,
