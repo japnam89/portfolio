@@ -3,16 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-// Admin page to publish a new blog post. Auth uses a Bearer token equal to the
-// POST_ADMIN_PASSWORD env var (set in hPanel). The token is sent only to the
-// same-origin /api/posts endpoint.
+// Admin page to publish a new blog post. Posting is open (no password) — the
+// /api/posts endpoint accepts unauthenticated POSTs.
 export default function NewPost() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
   const [cover, setCover] = useState("");
-  const [password, setPassword] = useState("");
   const [status, setStatus] = useState<{ ok: boolean; msg: string } | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -25,7 +23,6 @@ export default function NewPost() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${password}`,
         },
         body: JSON.stringify({ title, excerpt, content, cover }),
       });
@@ -47,8 +44,8 @@ export default function NewPost() {
     <section className="mx-auto max-w-3xl px-6 py-20">
       <h1 className="text-4xl font-bold tracking-tight">New post</h1>
       <p className="mt-2 text-sm text-zinc-500">
-        Admin-only. The password is the <code>POST_ADMIN_PASSWORD</code> set in
-        the hosting environment.
+        Write a new post in markdown. Publishing is open — anyone reaching this
+        page can post.
       </p>
 
       <form onSubmit={submit} className="mt-8 space-y-5">
@@ -93,18 +90,6 @@ export default function NewPost() {
             rows={14}
             className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 font-mono text-sm"
             placeholder={"# Heading\n\nWrite your post in **markdown**."}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-zinc-700">
-            Admin password
-          </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2"
           />
         </div>
 

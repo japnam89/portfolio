@@ -14,20 +14,8 @@ export async function GET() {
   }
 }
 
-// POST /api/posts -> create (admin only, protected by POST_ADMIN_PASSWORD)
+// POST /api/posts -> create (open, no auth)
 export async function POST(req: Request) {
-  const expected = process.env.POST_ADMIN_PASSWORD;
-  if (!expected) {
-    return NextResponse.json(
-      { error: "Blog admin not configured (set POST_ADMIN_PASSWORD)." },
-      { status: 503 },
-    );
-  }
-  const auth = req.headers.get("authorization") || "";
-  const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
-  if (token !== expected) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
   let body: { title?: string; content?: string; excerpt?: string; cover?: string };
   try {
     body = await req.json();
