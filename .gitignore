@@ -20,6 +20,9 @@
 # production
 /build
 
+# blog database (runtime, per-host)
+/data/
+
 # misc
 .DS_Store
 *.pem

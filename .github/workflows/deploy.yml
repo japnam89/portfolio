@@ -48,5 +48,10 @@ jobs:
             --host "$HOSTINGER_HOST" \
             --user "$HOSTINGER_USER" \
             --remote "$HOSTINGER_REMOTE" \
-            --password "$HOSTINGER_PASS" \
-            --built
+            --password "$HOSTINGER_PASS"
+          # NOTE: we deliberately do NOT pass --built here. `better-sqlite3` is a
+          # native addon whose prebuilt binary is ABI-locked to the build Node
+          # version. Building on the AKS runner and shipping .next could ship a
+          # binary that mismatches Hostinger's Node (ERR_DLOPEN_FAILED). Instead
+          # the runner uploads SOURCE and Hostinger runs `npm ci && npm run
+          # build` with its own Node, compiling better-sqlite3 correctly.

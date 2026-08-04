@@ -3,7 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Keep pdfkit out of the bundle so it can resolve its bundled font files
   // (Helvetica.afm) at runtime from node_modules instead of a phantom path.
-  serverExternalPackages: ["pdfkit"],
+  // better-sqlite3 is a native addon — externalize it so the host's prebuilt
+  // binary is required at runtime (avoids Turbopack ABI mismatches).
+  serverExternalPackages: ["pdfkit", "better-sqlite3"],
 
   // Allow images served from Hostinger Object Storage (RustFS). The gallery
   // uses `unoptimized` so remotePatterns isn't strictly required, but it's

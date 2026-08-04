@@ -40,9 +40,10 @@ import paramiko
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Directories/files excluded from the upload. The remote runs `npm ci` +
-# `npm run build`, so we normally must NOT ship .next. When --built is set,
-# .next/ IS included (it's the prebuilt artifact from the CI runner).
-EXCLUDE_DIRS = {".git", "node_modules", ".next", "out", "build", ".venv-deploy"}
+# `npm run build`, so we normally must NOT ship .next. `data/` (the SQLite blog
+# DB) is also excluded so a redeploy never overwrites the live database on the
+# host. When --built is set, .next/ IS included (prebuilt artifact).
+EXCLUDE_DIRS = {".git", "node_modules", ".next", "out", "build", ".venv-deploy", "data"}
 EXCLUDE_FILES = {
     ".env", ".env.local", ".env.production", ".env.example",  # secrets go in hPanel, not in upload
     ".demoenv", ".demoenv.example",  # also holds a presigned token
@@ -144,12 +145,19 @@ def sftp_put_dir(sftp, tar_name, remote_root):
     return os.path.join(remote_root, "_deploy.tar.gz").replace("\\", "/")
 
 
-def remote_extract_and_build(client, remote_root, tar_remote, no_build):
+def remote_extract_and_build(client, remote_root, tar_remote, no_build, built=False):
+    # Extract the uploaded tarball over the deploy dir. `tar -xzf` overwrites
+    # matching files but does NOT delete untracked files, so the SQLite blog DB
+    # at data/blog.db (created at runtime) survives redeploys.
     cmd_parts = []
     cmd_parts.append(f"cd '{remote_root}'")
     cmd_parts.append(f"&& tar -xzf '{tar_remote}'")
     cmd_parts.append(f"&& rm -f '{tar_remote}'")
-    if not no_build:
+    if built:
+        # Prebuilt artifact shipped from CI: install runtime deps only (Hostinger
+        # needs node_modules to actually RUN next start) and do NOT rebuild.
+        cmd_parts.append("&& npm ci --omit=dev")
+    elif not no_build:
         cmd_parts.append("&& npm ci --omit=dev")
         cmd_parts.append("&& npm run build")
     cmd = " ".join(cmd_parts)
@@ -196,7 +204,7 @@ def main():
         sftp = client.open_sftp()
         tar_remote = sftp_put_dir(sftp, tar_name, args.remote)
         sftp.close()
-        remote_extract_and_build(client, args.remote, tar_remote, no_build)
+        remote_extract_and_build(client, args.remote, tar_remote, no_build, built=args.built)
     finally:
         client.close()
         os.unlink(tar_name)
