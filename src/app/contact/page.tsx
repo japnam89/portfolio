@@ -5,6 +5,7 @@
 // that reacts to clicks needs to be a client component.
 
 import { useState } from "react";
+import BuyMeCoffee from "@/components/BuyMeCoffee";
 
 export default function Contact() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
@@ -108,6 +109,15 @@ export default function Contact() {
             </p>
           )}
         </form>
+
+        <div className="mt-10 border-t border-zinc-200/70 pt-8">
+          <p className="text-sm text-zinc-500">
+            If my work helped you, you can support it:
+          </p>
+          <div className="mt-4">
+            <BuyMeCoffee />
+          </div>
+        </div>
       </div>
     </section>
   );
