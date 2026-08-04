@@ -14,22 +14,6 @@ export default function Footer() {
           >
             Resume ↗
           </a>
-          <a
-            href="https://github.com/japnam89"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium text-zinc-700 transition-colors hover:text-blue-600"
-          >
-            GitHub ↗
-          </a>
-          <a
-            href="https://www.linkedin.com/in/japnam-singh-160968164/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium text-zinc-700 transition-colors hover:text-blue-600"
-          >
-            LinkedIn ↗
-          </a>
         </div>
       </div>
     </footer>
