@@ -1,47 +1,84 @@
-# CI: Build on AKS, deploy to Hostinger
+# Japnam.tech on Azure AKS (low-cost, self-hosted)
 
-This repo deploys via a **self-hosted GitHub Actions runner that runs as a pod
-in your Azure AKS cluster**. The runner builds the Next.js app and SFTP-deploys
-the prebuilt artifact to your Hostinger Node hosting. Hostinger only serves the
-app and owns the `japnam.tech` DNS — AKS is purely the build/CI host.
+Two things run in your Azure subscription:
+1. A **self-hosted GitHub Actions runner** (pod) — builds the app on push.
+2. The **Next.js app itself** (pod) — serves `japnam.tech` to the internet.
 
-## Flow
-```
-git push main
-   → GitHub Actions (routed to the AKS runner pod)
-       → npm ci --omit=dev
-       → npm run build            (prebuilt .next/ artifact)
-       → scripts/deploy-hostinger.py --built
-           → SFTP to Hostinger, extract, Hostinger `npm run start` serves it
-```
+Hostinger only **registers the domain** (`japnam.tech`) and serves DNS. You
+point the domain's A record at the AKS LoadBalancer IP.
 
-## 1. Register the AKS runner (one-time, from a machine with kubectl + AKS kubeconfig)
+---
+
+## Option A — Build on AKS runner, deploy to Hostinger (cheapest, no always-on node)
+- `runner-deployment.yaml` runs the Actions runner.
+- `.github/workflows/deploy.yml` builds + SFTP-deploys source to Hostinger's
+  Node hosting (Hostinger runs `npm ci && npm run build`).
+- Cost: GitHub Actions minutes only. No AKS node needed for serving.
+- See "Runner setup" below. Skip the serving manifests.
+
+## Option B — Serve on AKS (app runs in your cluster) ← *low-cost single node*
+- `serving.yaml` deploys the app container with a PersistentVolumeClaim for the
+  SQLite blog DB and a `LoadBalancer` Service (gives a public IP).
+- Cost: ~1 small AKS node (e.g. B2s ~ $30/mo + AKS control plane ~ $73/mo).
+  Use the **Spot/System node pool** smallest SKU to keep it low. The blog DB
+  persists on the PVC across restarts.
+
+### 1. Build & push the image
 ```bash
-kubectl create namespace portfolio
-kubectl create secret generic github-runner -n portfolio \
-  --from-literal=GITHUB_TOKEN=<github_PAT_classic_with_repo_scope>
-kubectl apply -f k8s/runner-deployment.yaml
+# from repo root, after `docker login <registry>`
+docker build -t <your-registry>/japnam-web:latest .
+docker push <your-registry>/japnam-web:latest
+# edit k8s/serving.yaml image: to match, then:
 ```
-The pod appears under repo → Settings → Actions → Runners, labelled `aks,portfolio`.
+You can build on the AKS runner (Option A) and push to ACR — no local Docker
+needed. Or `az acr build` to build in Azure.
 
-## 2. Add Hostinger secrets to the GitHub repo
-Settings → Secrets → Actions:
-- `HOSTINGER_HOST` — e.g. `srv1865422.hstgr.cloud` (the web-host SSH host,
-  **not** the RustFS storage IP `2.25.91.163`)
-- `HOSTINGER_USER` — the SSH user (e.g. `u123456`, not `root`)
-- `HOSTINGER_PASS` — SSH password
-- `HOSTINGER_REMOTE` — document root, e.g.
-  `/home/u123456/domains/japnam.tech/public_html`
+### 2. Create the env Secret (do NOT commit real secrets)
+```bash
+kubectl create secret generic japnam-env \
+  --from-literal=POST_ADMIN_PASSWORD='***' \
+  --from-literal=RUSTFS_ACCESS_KEY='***' \
+  --from-literal=RUSTFS_SECRET_KEY='***' \
+  --from-literal=RUSTFS_ENDPOINT='http://2.25.91.163:32773' \
+  --from-literal=RUSTFS_REGION='us-east-1' \
+  --from-literal=RUSTFS_SESSION_TOKEN='' \
+  --from-literal=RUSTFS_URL_EXPIRES='3600' \
+  --from-literal=RESEND_API_KEY='***' \
+  --from-literal=CONTACT_TO_EMAIL='you@example.com' \
+  --from-literal=CONTACT_FROM_EMAIL='Portfolio <onboarding@resend.dev>'
+```
 
-## 3. Hostinger side
-- In hPanel, set the Node app **Start command** to `npm run start` (the
-  `prestart` script builds if `.next` is missing, but CI ships a ready build).
-- Set runtime env vars (`RUSTFS_*`, `RESEND_*`) in hPanel → Environment.
-- The `japnam.tech` DNS stays on Hostinger; the runner only reaches Hostinger
-  over SSH/SFTP — AKS never exposes the app publicly.
+### 3. Apply
+```bash
+kubectl apply -f k8s/serving.yaml
+kubectl get svc japnam-web -w   # wait for EXTERNAL-IP
+```
+
+### 4. DNS (Hostinger)
+In hPanel → `japnam.tech` → **DNS Zone Editor** (switch off parking nameservers
+to Hostinger-managed DNS first):
+- `A    @    → <EXTERNAL-IP from step 3>`
+- `CNAME  www  →  japnam.tech`
+- Wait for propagation (≤ 24h).
+- TLS: add `cert-manager` + Let's Encrypt (or put Azure Front Door / App Gateway
+  in front) so `https://japnam.tech` works. Hostinger's free SSL does NOT cover
+  an AKS IP.
+
+---
+
+## Runner setup (Option A, or to build the image for Option B)
+1. Create a runner on GitHub: repo → Settings → Actions → Runners → New →
+   "New self-hosted runner" → Linux x64. Copy the `./config.sh` command and
+   token.
+2. Put the token in `k8s/runner-deployment.yaml` as `GITHUB_TOKEN`
+   (or create a K8s Secret and reference it).
+3. `kubectl apply -f k8s/runner-deployment.yaml`.
+4. The pod registers as a runner labelled `aks`. Push to `main` and the workflow
+   runs there. From AKS, `srv1865422.hstgr.cloud` resolves to the real Hostinger
+   IP (unlike this dev VM), so SFTP deploy works.
 
 ## Notes
-- The runner resolves `srv1865422.hstgr.cloud` to the real Hostinger IP (only
-  the build VM aliases it to localhost). So SFTP works from AKS.
-- `npm ci --omit=dev` is fine because `@tailwindcss/postcss` and
-  `@tailwindcss/oxide-linux-x64-gnu` are in `dependencies` (see DEPLOY.md).
+- `better-sqlite3` is compiled inside the Docker image against its own Node 22,
+  so there is no ABI mismatch (the SFTP/prebuilt path had this risk — see
+  DEPLOY.md).
+- The blog DB lives at `/app/data/blog.db` on the PVC; it survives pod restarts.

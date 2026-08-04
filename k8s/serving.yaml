@@ -1,0 +1,127 @@
+# Japnam.tech served from AKS (low-cost single-replica deployment).
+#
+# What this does:
+#   - Runs the Next.js container (built from the repo Dockerfile) in your AKS
+#     cluster. The SQLite blog DB lives on a PersistentVolumeClaim so posts
+#     survive pod restarts/rescheduling.
+#   - Exposes it via a Service type LoadBalancer, which gives you a public
+#     EXTERNAL-IP. Point japnam.tech DNS (in Hostinger) at that IP.
+#
+# Apply order:
+#   1. kubectl apply -f serving.yaml        # creates everything
+#   2. kubectl get svc japnam-web -w         # wait for EXTERNAL-IP
+#   3. In Hostinger DNS:  A  @  -> <EXTERNAL-IP>,  CNAME www -> japnam.tech
+#
+# Secrets: create the Secret values before applying, e.g.
+#   kubectl create secret generic japnam-env \
+#     --from-literal=POST_ADMIN_PASSWORD='***' \
+#     --from-literal=RUSTFS_ACCESS_KEY='***' \
+#     --from-literal=RUSTFS_SECRET_KEY='***' \
+#     --from-literal=RUSTFS_ENDPOINT='http://2.25.91.163:32773' \
+#     --from-literal=RUSTFS_REGION='us-east-1' \
+#     --from-literal=RUSTFS_SESSION_TOKEN='' \
+#     --from-literal=RUSTFS_URL_EXPIRES='3600' \
+#     --from-literal=RESEND_API_KEY='***' \
+#     --from-literal=CONTACT_TO_EMAIL='you@example.com' \
+#     --from-literal=CONTACT_FROM_EMAIL='Portfolio <onboarding@resend.dev>'
+# (Or edit the literal placeholders below — but don't commit real secrets;
+#  prefer `kubectl create secret` as shown.)
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: japnam-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  # For a managed disk on AKS, leave storageClassName unset (default) or set
+  # your cluster's default (e.g. managed-csi).
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: japnam-env
+type: Opaque
+stringData:
+  POST_ADMIN_PASSWORD: "CHANGE_ME"
+  RUSTFS_ACCESS_KEY: "CHANGE_ME"
+  RUSTFS_SECRET_KEY: "CHANGE_ME"
+  RUSTFS_ENDPOINT: "http://2.25.91.163:32773"
+  RUSTFS_REGION: "us-east-1"
+  RUSTFS_SESSION_TOKEN: ""
+  RUSTFS_URL_EXPIRES: "3600"
+  RESEND_API_KEY: "CHANGE_ME"
+  CONTACT_TO_EMAIL: "you@example.com"
+  CONTACT_FROM_EMAIL: "Portfolio <onboarding@resend.dev>"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: japnam-web
+  labels:
+    app: japnam-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: japnam-web
+  template:
+    metadata:
+      labels:
+        app: japnam-web
+    spec:
+      containers:
+        - name: web
+          # Build & push this from the repo root:
+          #   docker build -t <your-registry>/japnam-web:latest .
+          #   docker push <your-registry>/japnam-web:latest
+          image: CHANGE_ME.azurecr.io/japnam-web:latest
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: japnam-env
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: japnam-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: japnam-web
+spec:
+  type: LoadBalancer
+  selector:
+    app: japnam-web
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+      name: http
