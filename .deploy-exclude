@@ -1,0 +1,21 @@
+# Files/dirs excluded from the upload to Hostinger Node hosting.
+# Hostinger runs `npm ci` + `npm run build` + `npm run start`, so we must NOT
+# ship these:
+node_modules/
+.next/
+out/
+.git/
+.gitignore
+# Real env files (secrets) — set these in hPanel instead.
+.env.local
+.env
+.env.production
+# Misc local noise
+*.log
+npm-debug.log*
+.DS_Store
+core
+core.*
+# The deploy script itself + this exclude file are harmless but not needed
+.deploy-exclude
+scripts/deploy-hostinger.sh

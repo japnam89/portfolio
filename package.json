@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "prestart": "test -f .next/BUILD_ID || next build",
     "lint": "eslint"
   },
   "dependencies": {
