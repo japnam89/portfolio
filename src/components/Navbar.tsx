@@ -5,7 +5,8 @@ import Image from "next/image";
 import { useState } from "react";
 
 // A navigation bar. `Link` is Next.js's special anchor tag — client-side navigation.
-// Becomes a hamburger menu on small screens.
+// Becomes a hamburger menu on small screens. Social links are intentionally
+// omitted here (they live in the footer) for a cleaner header.
 
 const links = [
   { href: "/", label: "Home" },
@@ -15,81 +16,63 @@ const links = [
   { href: "/photography", label: "Photography" },
   { href: "/blog", label: "Blog" },
   { href: "/resume", label: "Resume" },
-  { href: "/contact", label: "Contact" },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-10 border-b border-zinc-200/70 bg-white/70 backdrop-blur">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+    <header className="sticky top-0 z-50 border-b border-white/40 bg-gradient-to-b from-white/80 to-white/50 backdrop-blur-xl">
+      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
         <Link
           href="/"
-          className="flex items-center gap-2 text-lg font-bold tracking-tight"
+          className="group flex items-center gap-2.5 rounded-full px-1 py-0.5"
           onClick={() => setOpen(false)}
         >
-          <Image
-            src="/logo.png"
-            alt="Japnam.tech logo"
-            width={28}
-            height={28}
-            className="rounded-md"
-            priority
-          />
-          Japnam<span className="text-gradient">.tech</span>
+          <span className="flex items-center justify-center rounded-xl bg-zinc-900 p-1.5 shadow-sm transition-transform group-hover:scale-105">
+            <Image
+              src="/logo.png"
+              alt="Japnam.tech logo"
+              width={22}
+              height={22}
+              className="rounded-md"
+              priority
+            />
+          </span>
+          <span className="text-base font-semibold tracking-tight text-zinc-900">
+            Japnam<span className="text-gradient">.tech</span>
+          </span>
         </Link>
 
         {/* Desktop links */}
-        <ul className="hidden items-center gap-5 text-sm font-medium text-zinc-600 md:flex">
+        <ul className="hidden items-center gap-1 text-sm font-medium text-zinc-600 md:flex">
           {links.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
-                className="transition-colors hover:text-zinc-900"
+                className="rounded-full px-3.5 py-2 transition-colors hover:bg-zinc-900/5 hover:text-zinc-900"
               >
                 {link.label}
               </Link>
             </li>
           ))}
-          <li>
-            <a
-              href="https://x.com/japnamfx"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-colors hover:text-zinc-900"
-            >
-              X
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://www.linkedin.com/in/japnam-singh-160968164/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-colors hover:text-zinc-900"
-            >
-              LinkedIn
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://github.com/japnam89"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-colors hover:text-zinc-900"
-            >
-              GitHub
-            </a>
-          </li>
         </ul>
+
+        <div className="hidden md:block">
+          <Link
+            href="/contact"
+            className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-zinc-700"
+          >
+            Contact
+          </Link>
+        </div>
 
         {/* Mobile hamburger */}
         <button
           type="button"
           aria-label="Toggle menu"
           aria-expanded={open}
-          className="rounded-md p-2 text-zinc-700 hover:bg-zinc-100 md:hidden"
+          className="rounded-md p-2 text-zinc-700 transition-colors hover:bg-zinc-900/5 md:hidden"
           onClick={() => setOpen((v) => !v)}
         >
           <svg
@@ -117,46 +100,29 @@ export default function Navbar() {
         </button>
       </nav>
 
-      {/* Mobile dropdown panel */}
+      {/* Mobile dropdown panel (no social links — footer holds those) */}
       {open && (
-        <div className="border-t border-zinc-200/70 bg-white px-6 py-4 md:hidden">
-          <ul className="flex flex-col gap-3 text-sm font-medium text-zinc-700">
+        <div className="border-t border-white/40 bg-white/95 px-6 py-4 md:hidden">
+          <ul className="flex flex-col gap-1 text-sm font-medium text-zinc-700">
             {links.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="block transition-colors hover:text-zinc-900"
+                  className="block rounded-lg px-3 py-2.5 transition-colors hover:bg-zinc-900/5 hover:text-zinc-900"
                   onClick={() => setOpen(false)}
                 >
                   {link.label}
                 </Link>
               </li>
             ))}
-            <li className="mt-2 flex gap-4 border-t border-zinc-200/70 pt-3">
-              <a
-                href="https://x.com/japnamfx"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-colors hover:text-zinc-900"
+            <li className="pt-2">
+              <Link
+                href="/contact"
+                onClick={() => setOpen(false)}
+                className="block rounded-lg bg-zinc-900 px-3 py-2.5 text-center font-semibold text-white"
               >
-                X
-              </a>
-              <a
-                href="https://www.linkedin.com/in/japnam-singh-160968164/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-colors hover:text-zinc-900"
-              >
-                LinkedIn
-              </a>
-              <a
-                href="https://github.com/japnam89"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-colors hover:text-zinc-900"
-              >
-                GitHub
-              </a>
+                Contact
+              </Link>
             </li>
           </ul>
         </div>
