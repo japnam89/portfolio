@@ -50,10 +50,16 @@ stringData:
   POST_ADMIN_PASSWORD: "CHANGE_ME"
   RUSTFS_ACCESS_KEY: "CHANGE_ME"
   RUSTFS_SECRET_KEY: "CHANGE_ME"
-  RUSTFS_ENDPOINT: "http://2.25.91.163:32773"
+  RUSTFS_ENDPOINT: "https://rustfs-dkgj.srv1865422.hstgr.cloud"
   RUSTFS_REGION: "us-east-1"
   RUSTFS_SESSION_TOKEN: ""
   RUSTFS_URL_EXPIRES: "3600"
+  # "For now" gallery override: comma-separated WORKING presigned URLs.
+  # Until RUSTFS_SECRET_KEY is set, paste your share-link URLs here (one string,
+  # comma-separated). They expire (~1 week) — refresh when the gallery blanks.
+  # Example:
+  # DEMO_PHOTO_URLS: "https://rustfs-dkgj.srv1865422.hstgr.cloud/photos/DSC08068.JPG?X-Amz-Algorithm=AWS4-HMAC-SHA256&...,https://..."
+  DEMO_PHOTO_URLS: ""
   RESEND_API_KEY: "CHANGE_ME"
   CONTACT_TO_EMAIL: "you@example.com"
   CONTACT_FROM_EMAIL: "Portfolio <onboarding@resend.dev>"
