@@ -23,6 +23,10 @@ Flags:
     --password  SSH password (use this OR --identity)
     --identity  Path to SSH private key (optional)
     --no-build  Upload only, skip `npm ci && npm run build` on the remote
+    --built     Source was ALREADY built on the CI runner: include the local
+                .next/ output in the upload and skip the remote build entirely
+                (Hostinger just serves it). Use in CI: build on the runner,
+                then ship the ready artifact.
     --dry-run   List files that would transfer, make no changes
 """
 import argparse
@@ -36,7 +40,8 @@ import paramiko
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Directories/files excluded from the upload. The remote runs `npm ci` +
-# `npm run build`, so we must NOT ship these.
+# `npm run build`, so we normally must NOT ship .next. When --built is set,
+# .next/ IS included (it's the prebuilt artifact from the CI runner).
 EXCLUDE_DIRS = {".git", "node_modules", ".next", "out", "build", ".venv-deploy"}
 EXCLUDE_FILES = {
     ".env", ".env.local", ".env.production", ".env.example",  # secrets go in hPanel, not in upload
@@ -61,13 +66,17 @@ def should_skip(path_rel: str) -> bool:
     return False
 
 
-def collect_files():
+def collect_files(built=False):
+    # When built=True, keep .next/ (prebuilt artifact); otherwise exclude it.
+    skip_dirs = set(EXCLUDE_DIRS)
+    if built:
+        skip_dirs.discard(".next")
     out = []
     for root, dirs, files in os.walk(REPO_ROOT):
         # prune excluded dirs in-place
         rel_root = os.path.relpath(root, REPO_ROOT)
         if rel_root == ".":
-            dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS and d not in EXTRA_SKIP_NAMES]
+            dirs[:] = [d for d in dirs if d not in skip_dirs and d not in EXTRA_SKIP_NAMES]
         else:
             top = rel_root.split("/")[0]
             if top in EXCLUDE_DIRS or top in EXTRA_SKIP_NAMES:
@@ -166,22 +175,28 @@ def main():
     ap.add_argument("--password", default="")
     ap.add_argument("--identity", default="")
     ap.add_argument("--no-build", action="store_true")
+    ap.add_argument("--built", action="store_true",
+                    help="Source was prebuilt on the runner; include local .next/ and skip remote build")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
-    files = collect_files()
-    print(f"==> Collected {len(files)} files to transfer (excluding node_modules/.next/.git/.env*)")
+    files = collect_files(built=args.built)
+    print(f"==> Collected {len(files)} files to transfer"
+          + (" (incl. prebuilt .next/)" if args.built else " (excluding node_modules/.next/.git/.env*)"))
     tar_name = make_tar(files, dry_run=args.dry_run)
     if args.dry_run:
         print("==> Dry run complete. Nothing transferred.")
         return
+
+    # --built implies the remote should not rebuild (artifact is ready)
+    no_build = args.no_build or args.built
 
     client = connect(args)
     try:
         sftp = client.open_sftp()
         tar_remote = sftp_put_dir(sftp, tar_name, args.remote)
         sftp.close()
-        remote_extract_and_build(client, args.remote, tar_remote, args.no_build)
+        remote_extract_and_build(client, args.remote, tar_remote, no_build)
     finally:
         client.close()
         os.unlink(tar_name)

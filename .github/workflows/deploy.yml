@@ -1,0 +1,52 @@
+name: Deploy to Hostinger (via AKS runner)
+
+# Builds the Next.js app on a self-hosted GitHub Actions runner that runs as a
+# pod inside YOUR Azure AKS cluster, then SFTP-deploys the prebuilt artifact to
+# your Hostinger Node hosting. Hostinger only serves the app + owns the DNS for
+# japnam.tech. The AKS cluster name below must match your runner's labels.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    # This job ONLY runs on the self-hosted runner registered in your AKS
+    # cluster (set the `runs-on` label when you create the runner). GitHub
+    # routes it there automatically — no AKS credentials needed in the repo.
+    runs-on: [self-hosted, aks, portfolio]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci --omit=dev
+
+      - name: Build (prebuilt artifact for Hostinger)
+        run: npm run build
+        # Hostinger still needs the env vars at RUNTIME (set in hPanel), but the
+        # build itself tolerates their absence thanks to the deferred check in
+        # src/lib/hostinger.ts.
+
+      - name: Deploy to Hostinger over SFTP
+        env:
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}     # e.g. srv1865422.hstgr.cloud
+          HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}     # e.g. u123456 (NOT root)
+          HOSTINGER_PASS: ${{ secrets.HOSTINGER_PASS }}
+          HOSTINGER_REMOTE: ${{ secrets.HOSTINGER_REMOTE }} # e.g. /home/u123456/domains/japnam.tech/public_html
+        run: |
+          python3 -m pip install --quiet paramiko
+          python3 scripts/deploy-hostinger.py \
+            --host "$HOSTINGER_HOST" \
+            --user "$HOSTINGER_USER" \
+            --remote "$HOSTINGER_REMOTE" \
+            --password "$HOSTINGER_PASS" \
+            --built

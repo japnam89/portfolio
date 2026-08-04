@@ -1,0 +1,92 @@
+# Self-hosted GitHub Actions runner as a pod in your AKS cluster.
+#
+# What this does:
+#   - Runs the official actions/runner container inside AKS.
+#   - Registers itself with YOUR repo's GitHub Actions (via the token Secret).
+#   - Labels itself "aks" + "portfolio" so the deploy workflow (runs-on:
+#     [self-hosted, aks, portfolio]) is routed here automatically.
+#   - Runs the Next.js build then SFTP-deploys to Hostinger. Hostinger only
+#     serves the app + owns the japnam.tech DNS. AKS is just the build/CI host.
+#
+# Setup (one-time, on your machine with kubectl + kubeconfig pointed at AKS):
+#   1. Create a GitHub Personal Access Token (classic, `repo` + `admin:org`
+#      if registering at org level, or just `repo` for a single repo) and the
+#      runner registration token is NOT needed — the PAT lets the container
+#      fetch a short-lived registration token itself.
+#   2. kubectl create secret generic github-runner \
+#        --namespace portfolio \
+#        --from-literal=GITHUB_TOKEN=<your_PAT>
+#   3. kubectl apply -f k8s/runner-deployment.yaml
+#
+# The runner pod will appear in GitHub: repo → Settings → Actions → Runners.
+# Every push to main triggers the workflow on this pod.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: portfolio
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: github-runner
+  namespace: portfolio
+type: Opaque
+# Populate GITHUB_TOKEN with a PAT before applying (see steps above).
+# kubectl create secret generic github-runner -n portfolio \
+#   --from-literal=GITHUB_TOKEN=ghp_xxx
+stringData:
+  GITHUB_TOKEN: "REPLACE_WITH_PAT"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: github-runner
+  namespace: portfolio
+  labels:
+    app: github-runner
+spec:
+  # One runner pod. Bump replicas only if you want parallel jobs.
+  replicas: 1
+  selector:
+    matchLabels:
+      app: github-runner
+  template:
+    metadata:
+      labels:
+        app: github-runner
+    spec:
+      containers:
+        - name: runner
+          image: ghcr.io/actions/actions-runner:latest
+          env:
+            - name: REPO_URL
+              value: "https://github.com/japnam89/portfolio"
+            - name: RUNNER_LABELS
+              value: "aks,portfolio"
+            - name: RUNNER_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: RUNNER_WORKDIR
+              value: "/_work"
+            - name: ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: github-runner
+                  key: GITHUB_TOKEN
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+          volumeMounts:
+            - name: work
+              mountPath: /_work
+            # Docker socket is NOT mounted — build runs via npm, not docker-in-k8s.
+      volumes:
+        - name: work
+          emptyDir: {}
+      # Don't auto-restart into a broken state; let it re-register cleanly.
+      restartPolicy: Always
