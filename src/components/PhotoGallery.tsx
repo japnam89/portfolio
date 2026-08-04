@@ -30,8 +30,11 @@ export default function PhotoGallery() {
     }
   }, []);
 
-  // Initial load.
+  // Initial load. `load` is a stable useCallback([]), so this is the intended
+  // "fetch on mount" pattern (no stale closure); the lint rule is a false
+  // positive for this case.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
 

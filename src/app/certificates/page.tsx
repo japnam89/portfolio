@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { certificates, LINKEDIN_CERTS_URL } from "@/data/certificates";
 
 // "/certificates". Renders a responsive grid of picture tiles, ordered
