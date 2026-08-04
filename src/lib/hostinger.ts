@@ -1,16 +1,19 @@
 // Server-only helper for Hostinger Object Storage (RustFS, fronted by Traefik).
 // Lists photo objects under PHOTOS_PREFIX and mints fresh presigned GET URLs.
 //
-// Learned from a working share URL (http://2.25.91.163:32773/photos/...):
-// - The S3 gateway is reached at ENDPOINT (an IP:port, e.g. 2.25.91.163:32773),
-//   NOT the public srv1865422.hstgr.cloud host. Sign host = that endpoint host.
-// - Path-style, and the bucket (rustfs-dkgj) is served at the ROOT — i.e. the
-//   object key is just "photos/XXX.JPG" with no bucket prefix in the path.
-// - Requests use a session access key + session token (temp credentials).
-// - We use the `aws4` library (correct, minimal SigV4).
+// Verified working config (decoded from a valid share URL):
+// - Public S3 gateway host: https://rustfs-dkgj.srv1865422.hstgr.cloud
+//   (the raw 2.25.91.163:32773 IP is NOT reachable the same way; use the host).
+// - Path-style, bucket at root: object key is "photos/XXX.JPG" (no bucket prefix).
+// - Auth uses a SESSION access key + session token (temp creds), e.g.
+//   RUSTFS_ACCESS_KEY=F36OG0FNCW0LYCIPCDFQ with RUSTFS_SESSION_TOKEN=<JWT>.
+// - Region us-east-1.
+// Sign with `aws4` (correct, minimal SigV4).
 import aws4 from "aws4";
 
-const endpoint = process.env.RUSTFS_ENDPOINT ?? "http://2.25.91.163:32773";
+// Public gateway host (reachable, returns images). Set in hPanel as RUSTFS_ENDPOINT.
+const endpoint =
+  process.env.RUSTFS_ENDPOINT ?? "https://rustfs-dkgj.srv1865422.hstgr.cloud";
 const region = process.env.RUSTFS_REGION ?? "us-east-1";
 const accessKeyId = process.env.RUSTFS_ACCESS_KEY;
 const secretAccessKey = process.env.RUSTFS_SECRET_KEY ?? process.env.RUSTFS_SECRET_ACCESS_KEY;
