@@ -25,9 +25,11 @@ services:
     restart: unless-stopped
     network_mode: host
     volumes:
-      # Persist the SQLite blog DB (data/blog.db) across container recreations.
-      # Without this, posts vanish on every `docker compose up --build`.
-      - japnam-data:/data
+      # Persist the SQLite blog DB across container recreations.
+      # The app writes to process.cwd()/data = /app/data (WORKDIR is /app in the
+      # Dockerfile), so the volume MUST mount there — NOT /data. Mounting at
+      # /data left the DB in the ephemeral image layer and wiped it on rebuild.
+      - japnam-data:/app/data
     environment:
       NODE_ENV: production
       PORT: "3000"
