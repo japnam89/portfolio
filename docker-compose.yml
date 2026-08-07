@@ -21,6 +21,10 @@ services:
     image: japnam-web:latest
     restart: unless-stopped
     network_mode: host
+    volumes:
+      # Persist the SQLite blog DB (data/blog.db) across container recreations.
+      # Without this, posts vanish on every `docker compose up --build`.
+      - japnam-data:/data
     environment:
       NODE_ENV: production
       PORT: "3000"
@@ -49,3 +53,8 @@ services:
       - 'traefik.http.routers.japnam-www.tls=true'
       - 'traefik.http.routers.japnam-www.tls.certresolver=letsencrypt'
       - 'traefik.http.routers.japnam-www.middlewares=japnam-www'
+
+# Named volume for persistent blog DB (mounted at /data inside the container).
+# Declared at the top level so Docker creates/keeps it across `up --build`.
+volumes:
+  japnam-data:
