@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #0f172a;
 }
 
 @theme inline {
@@ -12,17 +12,14 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Light theme is forced (eye-friendly soft palette). The previous
+   prefers-color-scheme: dark override is intentionally removed so the site
+   stays light regardless of the visitor's OS setting. */
 
 body {
   background:
-    radial-gradient(45% 35% at 12% 0%, rgba(59, 130, 246, 0.12), transparent 60%),
-    radial-gradient(45% 35% at 88% 8%, rgba(168, 85, 247, 0.12), transparent 60%),
+    radial-gradient(45% 35% at 12% 0%, rgba(59, 130, 246, 0.08), transparent 60%),
+    radial-gradient(45% 35% at 88% 8%, rgba(168, 85, 247, 0.08), transparent 60%),
     var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
@@ -129,12 +126,12 @@ body {
 .stagger > *:nth-child(3) { animation-delay: 0.25s; }
 .stagger > *:nth-child(4) { animation-delay: 0.35s; }
 
-/* Dark gradient hero background. */
+/* Light hero background (matches the forced light theme). */
 .hero-dark {
   background:
-    radial-gradient(60% 60% at 50% 0%, rgba(59, 130, 246, 0.18) 0%, transparent 70%),
-    linear-gradient(180deg, #0b1120 0%, #0a0a0a 100%);
-  color: #f8fafc;
+    radial-gradient(60% 60% at 50% 0%, rgba(59, 130, 246, 0.12) 0%, transparent 70%),
+    linear-gradient(180deg, #eef2ff 0%, #f8fafc 100%);
+  color: #0f172a;
 }
 
 /* ===== Blog markdown: code blocks + inline code ===== */
