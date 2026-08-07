@@ -39,9 +39,7 @@ export default function About() {
             and <strong className="text-zinc-900">Azure Architect</strong> with
             over 10 years of software engineering experience. I design and lead
             resilient cloud platforms on Azure, set technical direction for
-            platform teams, and stay hands-on with code. This portfolio —
-            including its Node.js contact API — is something I built myself while
-            exploring modern web tooling.
+            platform teams, and stay hands-on with code.
           </p>
 
           <h2 className="mt-12 text-2xl font-semibold">What I work with</h2>
