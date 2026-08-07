@@ -5,6 +5,8 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # Allow manually re-running the deploy (e.g. after adding repo secrets).
+  workflow_dispatch:
 
 jobs:
   build:
