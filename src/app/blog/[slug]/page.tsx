@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPost, listPosts } from "@/lib/blog";
 import { renderMarkdown } from "@/lib/markdown";
+import { presignGet } from "@/lib/hostinger";
 import PostAdminControls from "@/components/PostAdminControls";
 
 export const dynamic = "force-dynamic";
@@ -39,6 +40,21 @@ export default async function PostPage({
 
   const html = renderMarkdown(post.content);
 
+  // Cover: if it's a RustFS key (no scheme), mint a fresh presigned URL at
+  // render time so it never goes stale. Full URLs pass through unchanged.
+  let coverSrc: string | null = null;
+  if (post.cover) {
+    if (post.cover.startsWith("http")) {
+      coverSrc = post.cover;
+    } else {
+      try {
+        coverSrc = await presignGet(post.cover);
+      } catch {
+        coverSrc = null;
+      }
+    }
+  }
+
   // Related posts: other posts (most recent first), excluding the current one.
   const related = listPosts()
     .filter((p) => p.slug !== post.slug)
@@ -51,10 +67,10 @@ export default async function PostPage({
       </Link>
       <h1 className="mt-6 text-4xl font-bold tracking-tight">{post.title}</h1>
       <p className="mt-2 text-sm text-zinc-400">{formatDate(post.created_at)}</p>
-      {post.cover && (
+      {coverSrc && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={post.cover}
+          src={coverSrc}
           alt={post.title}
           className="mt-6 w-full rounded-xl"
         />

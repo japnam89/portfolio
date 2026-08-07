@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { listPosts, type Post } from "@/lib/blog";
+import { presignGet } from "@/lib/hostinger";
 
 export const metadata: Metadata = {
   title: "Blog — Japnam Singh",
@@ -20,13 +21,26 @@ function formatDate(iso: string) {
 }
 
 // "/blog". Posts are read from the SQLite DB at request time.
-export default function Blog() {
+export default async function Blog() {
   let posts: Post[] = [];
   try {
     posts = listPosts();
   } catch {
     posts = [];
   }
+
+  // Resolve cover images (RustFS keys -> fresh presigned URLs) up front.
+  const covers = await Promise.all(
+    posts.map(async (p) => {
+      if (!p.cover) return "";
+      if (p.cover.startsWith("http")) return p.cover;
+      try {
+        return await presignGet(p.cover);
+      } catch {
+        return "";
+      }
+    }),
+  );
 
   return (
     <section className="mx-auto max-w-3xl px-6 py-20">
@@ -47,12 +61,20 @@ export default function Blog() {
         {posts.length === 0 && (
           <p className="text-zinc-500">No posts yet — publish one from the admin page.</p>
         )}
-        {posts.map((p) => (
+        {posts.map((p, i) => (
           <article
             key={p.id}
             className="border-b border-zinc-200/70 pb-6 last:border-0"
           >
             <Link href={`/blog/${p.slug}`} className="group">
+              {covers[i] && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={covers[i]}
+                  alt={p.title}
+                  className="mb-4 h-40 w-full rounded-xl object-cover"
+                />
+              )}
               <h2 className="text-2xl font-semibold tracking-tight group-hover:text-gradient">
                 {p.title}
               </h2>

@@ -1,5 +1,1 @@
-{
-  "title": "Embedding code snippets in blog posts",
-  "excerpt": "How the markdown renderer now highlights fenced code blocks with highlight.js.",
-  "content": "# Code snippets now render with syntax highlighting\n\nYou can embed source code in a post using a fenced code block. Specify the language for the best result:\n\n```ts\nfunction greet(name: string): string {\n  // a friendly hello\n  return `Hello, ${name}!`;\n}\n```\n\nBash works too:\n\n```bash\nkubectl get svc japnam-web\ncurl -s https://japnam.tech/api/env-status\n```\n\nAnd inline code like `npm run build` is styled as well.\n"
-}
+{"title": "Embedding code snippets in blog posts", "excerpt": "How the markdown renderer now highlights fenced code blocks with highlight.js.", "content": "# Code snippets now render with syntax highlighting\n\nYou can embed source code in a post using a fenced code block. Specify the language for the best result:\n\n```ts\nfunction greet(name: string): string {\n  // a friendly hello\n  return `Hello, ${name}!`;\n}\n```\n\nBash works too:\n\n```bash\nkubectl get svc japnam-web\ncurl -s https://japnam.tech/api/env-status\n```\n\nAnd inline code like `npm run build` is styled as well.\n", "cover": "DSC07659.JPG"}
