@@ -15,17 +15,21 @@
 # Secrets: create the Secret values before applying, e.g.
 #   kubectl create secret generic japnam-env \
 #     --from-literal=POST_ADMIN_PASSWORD='***' \
-#     --from-literal=RUSTFS_ACCESS_KEY='***' \
+#     --from-literal=RUSTFS_ACCESS_KEY='JfMzX0Xv5ySZW4aTMFKi' \
 #     --from-literal=RUSTFS_SECRET_KEY='***' \
-#     --from-literal=RUSTFS_ENDPOINT='http://2.25.91.163:32773' \
+#     --from-literal=RUSTFS_ENDPOINT='https://rustfs-dkgj.srv1865422.hstgr.cloud' \
 #     --from-literal=RUSTFS_REGION='us-east-1' \
-#     --from-literal=RUSTFS_SESSION_TOKEN='' \
+#     --from-literal=RUSTFS_BUCKET='photos' \
 #     --from-literal=RUSTFS_URL_EXPIRES='3600' \
 #     --from-literal=RESEND_API_KEY='***' \
 #     --from-literal=CONTACT_TO_EMAIL='you@example.com' \
 #     --from-literal=CONTACT_FROM_EMAIL='Portfolio <onboarding@resend.dev>'
-# (Or edit the literal placeholders below — but don't commit real secrets;
-#  prefer `kubectl create secret` as shown.)
+# (Don't commit real secrets; prefer `kubectl create secret` as shown. If the
+#  Secret already exists, delete+recreate it, then `kubectl rollout restart
+#  deployment/japnam-web` so pods pick up the new values via envFrom.)
+# NOTE: the Deployment uses `envFrom: secretRef: { name: japnam-env }`, so the
+# Secret keys above MUST match these exact names or the gallery stays blank
+# (the /api/photos route returns configured:false when they're missing).
 
 ---
 apiVersion: v1
