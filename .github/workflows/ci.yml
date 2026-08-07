@@ -29,8 +29,42 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          # Build degrades gracefully without these; they're only needed at
-          # runtime for the live RustFS photo gallery.
+          # Build degrades gracefully without these; only needed at runtime
+          # for the live RustFS photo gallery.
           RUSTFS_BUCKET: photos
           RUSTFS_REGION: us-east-1
           RUSTFS_URL_EXPIRES: "3600"
+
+  deploy:
+    name: Deploy to VPS
+    # Only deploy on a push to main (never on PRs).
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+
+      - name: Add VPS host key
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Pull, render .env, and rebuild on the VPS
+        run: |
+          ssh "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+            "set -e
+             cd /root/portfolio
+             git pull origin main
+             printf 'RUSTFS_ACCESS_KEY=%s\nRUSTFS_SECRET_KEY=%s\nRUSTFS_ENDPOINT=%s\nRUSTFS_REGION=%s\nRUSTFS_BUCKET=%s\nRUSTFS_URL_EXPIRES=%s\nPOST_ADMIN_PASSWORD=%s\n' \
+               '${{ secrets.RUSTFS_ACCESS_KEY }}' \
+               '${{ secrets.RUSTFS_SECRET_KEY }}' \
+               '${{ secrets.RUSTFS_ENDPOINT }}' \
+               '${{ secrets.RUSTFS_REGION }}' \
+               '${{ secrets.RUSTFS_BUCKET }}' \
+               '${{ secrets.RUSTFS_URL_EXPIRES }}' \
+               '${{ secrets.POST_ADMIN_PASSWORD }}' > .env
+             docker compose up -d --build
+             docker image prune -f"
