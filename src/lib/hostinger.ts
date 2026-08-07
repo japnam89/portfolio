@@ -1,89 +1,67 @@
-// Server-only helper for Hostinger Object Storage (RustFS, fronted by Traefik).
-// Lists photo objects under PHOTOS_PREFIX and mints fresh presigned GET URLs.
+// Server-only helper for Hostinger Object Storage (RustFS, S3-compatible).
+// Lists photo objects in the `photos` bucket and mints fresh presigned GET
+// URLs. Uses the official AWS SDK v3 S3Client with path-style addressing
+// (RustFS serves buckets at the root of its gateway host).
 //
-// Verified working config (decoded from a valid share URL):
-// - Public S3 gateway host: https://rustfs-dkgj.srv1865422.hstgr.cloud
-//   (the raw 2.25.91.163:32773 IP is NOT reachable the same way; use the host).
-// - Path-style, bucket at root: object key is "photos/XXX.JPG" (no bucket prefix).
-// - Auth uses a SESSION access key + session token (temp creds), e.g.
-//   RUSTFS_ACCESS_KEY=F36OG0FNCW0LYCIPCDFQ with RUSTFS_SESSION_TOKEN=<JWT>.
-// - Region us-east-1.
-// Sign with `aws4` (correct, minimal SigV4).
-import aws4 from "aws4";
+// Verified working config (tested from this environment):
+// - endpoint: https://rustfs-dkgj.srv1865422.hstgr.cloud
+// - region: us-east-1
+// - accessKeyId / secretAccessKey: from RUSTFS_ACCESS_KEY / RUSTFS_SECRET_KEY
+// - bucket: "photos" (forcePathStyle: true)
+import {
+  S3Client,
+  ListObjectsV2Command,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-// Public gateway host (reachable, returns images). Set in hPanel as RUSTFS_ENDPOINT.
-const endpoint =
-  process.env.RUSTFS_ENDPOINT ?? "https://rustfs-dkgj.srv1865422.hstgr.cloud";
+const endpoint = process.env.RUSTFS_ENDPOINT ?? "https://rustfs-dkgj.srv1865422.hstgr.cloud";
 const region = process.env.RUSTFS_REGION ?? "us-east-1";
 const accessKeyId = process.env.RUSTFS_ACCESS_KEY;
 const secretAccessKey = process.env.RUSTFS_SECRET_KEY ?? process.env.RUSTFS_SECRET_ACCESS_KEY;
-const sessionToken = process.env.RUSTFS_SESSION_TOKEN;
+const bucket = process.env.RUSTFS_BUCKET ?? "photos";
 const expires = Number(process.env.RUSTFS_URL_EXPIRES ?? 3600);
 
-// NOTE: credential validation is intentionally deferred to request time (inside
-// `presign`), NOT at module load. Throwing here would crash `next build`
-// during "Collecting page data" even for the dynamic /api/photos route, which
-// is built to degrade gracefully when storage is unavailable.
-function requireCreds() {
-  if (!accessKeyId || !secretAccessKey) {
-    throw new Error("RustFS env vars missing. Set RUSTFS_ACCESS_KEY / RUSTFS_SECRET_KEY (and RUSTFS_ENDPOINT, RUSTFS_SESSION_TOKEN).");
-  }
-}
-
-// Parse host:port from the endpoint for SigV4 host signing.
-const endpointHost = endpoint.replace(/^https?:\/\//, "").replace(/\/$/, "");
+// NOTE: credential validation is deferred to request time (inside the client
+// call), NOT at module load — so `next build` doesn't crash when these env vars
+// are absent in some environments.
+const client = new S3Client({
+  region,
+  endpoint,
+  credentials: accessKeyId && secretAccessKey ? { accessKeyId, secretAccessKey } : undefined,
+  forcePathStyle: true,
+});
 
 export const PHOTOS_PREFIX = "photos/";
 const IMAGE_RE = /\.(jpe?g|png|webp|gif|avif|bmp)$/i;
 
-// Presign with aws4. Path-style, bucket at root (key already includes prefix).
-function presign(key: string, xId = "GetObject"): string {
-  requireCreds();
-  const signed = aws4.sign({
-    accessKeyId,
-    secretAccessKey,
-    ...(sessionToken ? { sessionToken } : {}),
-    service: "s3",
-    region,
-    host: endpointHost,
-    path: `/${key}?x-amz-checksum-mode=ENABLED&x-id=${xId}`,
-    signQuery: true,
-    expires,
-  });
-  return signed.url || `${endpoint}/${key}`;
-}
-
-// List every image object under PHOTOS_PREFIX.
+// List every image object in the photos bucket. Objects are stored with bare
+// keys (e.g. "DSC08068.JPG") inside the "photos" bucket, so we list with no
+// prefix and filter by extension. (Listing with Prefix "photos/" would
+// double up to "photos/photos/..." and return nothing.)
 export async function listPhotoKeys(): Promise<string[]> {
   const keys: string[] = [];
   let continuation: string | undefined;
   do {
-    const extra: Record<string, string> = {};
-    if (continuation) extra["continuation-token"] = continuation;
-    const url = presign("", "ListObjectsV2");
-    const u = new URL(url);
-    u.searchParams.set("x-id", "ListObjectsV2");
-    u.searchParams.set("list-type", "2");
-    u.searchParams.set("prefix", PHOTOS_PREFIX);
-    if (continuation) u.searchParams.set("continuation-token", continuation);
-
-    const res = await fetch(u.toString());
-    if (!res.ok) {
-      const body = await res.text();
-      throw new Error(`ListObjects failed ${res.status}: ${body.slice(0, 200)}`);
+    const res = await client.send(
+      new ListObjectsV2Command({
+        Bucket: bucket,
+        ContinuationToken: continuation,
+      })
+    );
+    for (const obj of res.Contents ?? []) {
+      if (obj.Key && IMAGE_RE.test(obj.Key)) keys.push(obj.Key);
     }
-    const xml = await res.text();
-    const contents = xml.match(/<Contents>([\s\S]*?)<\/Contents>/g) ?? [];
-    for (const c of contents) {
-      const k = c.match(/<Key>(.*?)<\/Key>/)?.[1];
-      if (k && IMAGE_RE.test(k)) keys.push(k);
-    }
-    continuation = xml.match(/<NextContinuationToken>(.*?)<\/NextContinuationToken>/)?.[1];
+    continuation = res.IsTruncated ? res.NextContinuationToken : undefined;
   } while (continuation);
   return keys;
 }
 
 // Mint a fresh presigned GET URL for one object.
 export async function presignGet(key: string): Promise<string> {
-  return presign(key);
+  return getSignedUrl(
+    client,
+    new GetObjectCommand({ Bucket: bucket, Key: key }),
+    { expiresIn: expires }
+  );
 }

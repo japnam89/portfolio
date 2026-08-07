@@ -48,17 +48,15 @@ metadata:
 type: Opaque
 stringData:
   POST_ADMIN_PASSWORD: "CHANGE_ME"
-  RUSTFS_ACCESS_KEY: "CHANGE_ME"
-  RUSTFS_SECRET_KEY: "CHANGE_ME"
+  RUSTFS_ACCESS_KEY: "JfMzX0Xv5ySZW4aTMFKi"
+  RUSTFS_SECRET_KEY: "RkGDLBKE7BK1nHWAjgEGdWUcZAWFfpH5zrn0aXpv"
   RUSTFS_ENDPOINT: "https://rustfs-dkgj.srv1865422.hstgr.cloud"
   RUSTFS_REGION: "us-east-1"
-  RUSTFS_SESSION_TOKEN: ""
+  RUSTFS_BUCKET: "photos"
   RUSTFS_URL_EXPIRES: "3600"
-  # "For now" gallery override: comma-separated WORKING presigned URLs.
-  # Until RUSTFS_SECRET_KEY is set, paste your share-link URLs here (one string,
-  # comma-separated). They expire (~1 week) — refresh when the gallery blanks.
-  # Example:
-  # DEMO_PHOTO_URLS: "https://rustfs-dkgj.srv1865422.hstgr.cloud/photos/DSC08068.JPG?X-Amz-Algorithm=AWS4-HMAC-SHA256&...,https://..."
+  # Optional fallback: comma-separated WORKING presigned URLs. If set, /api/photos
+  # serves these directly instead of listing the bucket. Leave empty to use the
+  # live S3 listing (preferred).
   DEMO_PHOTO_URLS: ""
   RESEND_API_KEY: "CHANGE_ME"
   CONTACT_TO_EMAIL: "you@example.com"
