@@ -1,13 +1,17 @@
 # Portfolio (japnam.tech) deployment on the Hostinger VPS, behind the
-# existing Traefik proxy. Matches the other stacks' convention.
+# existing Traefik proxy.
 #
-# Usage (on the VPS, in this dir):
+# IMPORTANT: the traefik stack on this VPS runs with `network_mode: host`,
+# so there is NO user-defined bridge network to join. Instead we run this
+# container in host network mode too; Traefik (also host) reaches it at
+# 127.0.0.1:3000. The traefik labels below let Traefik route japnam.tech
+# -> this service automatically.
+#
+# Usage (on the VPS, in the repo dir):
 #   docker compose up -d --build
-# Traefik is already running and auto-picks up the labels below, so
-# japnam.tech (DNS already points at this VPS) starts routing to this app.
+# DNS already points japnam.tech at this VPS, so Traefik starts serving it.
 #
-# Secrets are inline here for simplicity (single-tenant VPS, not a shared
-# repo). If you later commit this, move them to an env_file.
+# Secrets inline for simplicity (single-tenant VPS). Move to env_file if committed.
 
 services:
   web:
@@ -16,6 +20,7 @@ services:
       dockerfile: Dockerfile
     image: japnam-web:latest
     restart: unless-stopped
+    network_mode: host
     environment:
       NODE_ENV: production
       PORT: "3000"
@@ -42,10 +47,3 @@ services:
       - 'traefik.http.routers.japnam-www.entrypoints=websecure'
       - 'traefik.http.routers.japnam-www.tls=true'
       - 'traefik.http.routers.japnam-www.middlewares=japnam-www'
-    networks:
-      - traefik
-
-networks:
-  traefik:
-    external: true
-    name: traefik_traefik
