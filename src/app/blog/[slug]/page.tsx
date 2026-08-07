@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { marked } from "marked";
 import { getPost } from "@/lib/blog";
+import { renderMarkdown } from "@/lib/markdown";
 import PostAdminControls from "@/components/PostAdminControls";
 
 export const dynamic = "force-dynamic";
@@ -37,7 +37,7 @@ export default async function PostPage({
   const post = getPost(slug);
   if (!post) notFound();
 
-  const html = marked.parse(post.content, { async: false }) as string;
+  const html = renderMarkdown(post.content);
 
   return (
     <article className="mx-auto max-w-3xl px-6 py-20">
