@@ -5,7 +5,15 @@ const nextConfig: NextConfig = {
   // (Helvetica.afm) at runtime from node_modules instead of a phantom path.
   // better-sqlite3 is a native addon — externalize it so the host's prebuilt
   // binary is required at runtime (avoids Turbopack ABI mismatches).
-  serverExternalPackages: ["pdfkit", "better-sqlite3"],
+  // @aws-sdk/* must also be external: bundling it with webpack breaks SigV4
+  // signing at runtime on the host (the gallery API returns empty on the live
+  // site while working locally). Requiring it at runtime avoids that.
+  serverExternalPackages: [
+    "pdfkit",
+    "better-sqlite3",
+    "@aws-sdk/client-s3",
+    "@aws-sdk/s3-request-presigner",
+  ],
 
   // Allow images served from Hostinger Object Storage (RustFS). The gallery
   // uses `unoptimized` so remotePatterns isn't strictly required, but it's
