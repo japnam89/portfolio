@@ -98,14 +98,16 @@ export default function PhotoGallery() {
               )}
 
               {(meta.title || meta.location) && (
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 text-left opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent px-3 pb-2.5 pt-8 text-left">
                   {meta.title && (
-                    <p className="text-sm font-medium text-white">
+                    <p className="text-sm font-medium leading-tight text-white drop-shadow">
                       {meta.title}
                     </p>
                   )}
                   {meta.location && (
-                    <p className="text-xs text-zinc-300">{meta.location}</p>
+                    <p className="mt-0.5 text-xs leading-tight text-zinc-200 drop-shadow">
+                      {meta.location}
+                    </p>
                   )}
                 </div>
               )}

@@ -12,10 +12,25 @@ export type PhotoMeta = {
 };
 
 export const photoMeta: Record<string, PhotoMeta> = {
-  "DSC07956.JPG": {
-    alt: "Replace with a description of this photo",
-    title: "Photo title",
-    location: "Location",
+  "DSC07343.JPG": {
+    alt: "A frame from the photography collection",
+    title: "DSC07343",
+    location: "Add location",
+  },
+  "DSC07344.JPG": {
+    alt: "A frame from the photography collection",
+    title: "DSC07344",
+    location: "Add location",
+  },
+  "DSC07659.JPG": {
+    alt: "A frame from the photography collection",
+    title: "DSC07659",
+    location: "Add location",
+  },
+  "DSC08068.JPG": {
+    alt: "A frame from the photography collection",
+    title: "DSC08068",
+    location: "Add location",
   },
 };
 
