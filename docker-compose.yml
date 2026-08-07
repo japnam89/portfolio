@@ -1,0 +1,51 @@
+# Portfolio (japnam.tech) deployment on the Hostinger VPS, behind the
+# existing Traefik proxy. Matches the other stacks' convention.
+#
+# Usage (on the VPS, in this dir):
+#   docker compose up -d --build
+# Traefik is already running and auto-picks up the labels below, so
+# japnam.tech (DNS already points at this VPS) starts routing to this app.
+#
+# Secrets are inline here for simplicity (single-tenant VPS, not a shared
+# repo). If you later commit this, move them to an env_file.
+
+services:
+  web:
+    build:
+      context: /opt/data/portfolio
+      dockerfile: Dockerfile
+    image: japnam-web:latest
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      RUSTFS_ACCESS_KEY: "JfMzX0Xv5ySZW4aTMFKi"
+      RUSTFS_SECRET_KEY: "RkGDLBKE7BK1nHWAjgEGdWUcZAWFfpH5zrn0aXpv"
+      RUSTFS_ENDPOINT: "https://rustfs-dkgj.srv1865422.hstgr.cloud"
+      RUSTFS_REGION: "us-east-1"
+      RUSTFS_BUCKET: "photos"
+      RUSTFS_URL_EXPIRES: "3600"
+      POST_ADMIN_PASSWORD: "CHANGE_ME"
+      RESEND_API_KEY: "CHANGE_ME"
+      CONTACT_TO_EMAIL: "you@example.com"
+      CONTACT_FROM_EMAIL: "Portfolio <onboarding@resend.dev>"
+      NEXT_PUBLIC_PAYPAL_URL: "https://paypal.me/japnam89"
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.japnam.rule=Host(`japnam.tech`) || Host(`www.japnam.tech`)'
+      - 'traefik.http.routers.japnam.entrypoints=websecure'
+      - 'traefik.http.routers.japnam.tls=true'
+      - 'traefik.http.services.japnam.loadbalancer.server.port=3000'
+      - 'traefik.http.middlewares.japnam-www.redirectregex.regex=^https?://www\.japnam\.tech/(.*)'
+      - 'traefik.http.middlewares.japnam-www.redirectregex.replacement=https://japnam.tech/$${1}'
+      - 'traefik.http.routers.japnam-www.rule=Host(`www.japnam.tech`)'
+      - 'traefik.http.routers.japnam-www.entrypoints=websecure'
+      - 'traefik.http.routers.japnam-www.tls=true'
+      - 'traefik.http.routers.japnam-www.middlewares=japnam-www'
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true
+    name: traefik_traefik
