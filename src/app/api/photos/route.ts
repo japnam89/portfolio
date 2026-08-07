@@ -21,6 +21,17 @@ export async function GET() {
     process.env.RUSTFS_ACCESS_KEY && process.env.RUSTFS_SECRET_KEY,
   );
 
+  // Without credentials there's no point calling RustFS — return an empty
+  // gallery (200) instead of letting the SDK throw a 500.
+  if (!configured) {
+    return NextResponse.json({
+      photos: [],
+      source: "rustfs",
+      configured: false,
+      error: "RUSTFS_ACCESS_KEY / RUSTFS_SECRET_KEY not set in environment",
+    });
+  }
+
   try {
     const keys = await listPhotoKeys();
     const photos = await Promise.all(
