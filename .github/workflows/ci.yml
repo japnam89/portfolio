@@ -67,6 +67,16 @@ jobs:
           chmod 600 "$HOME/vps_key"
           eval "$(ssh-agent -s)"
           ssh-add "$HOME/vps_key"
+          # DEBUG: show the fingerprint(s) the agent will offer, and the
+          # resolved target. Compare the fingerprint to:
+          #   ssh-keygen -l -f ~/.ssh/japnam-deploy   (on your machine)
+          echo "::group::ssh debug"
+          echo "Target: $VPS_USER@$VPS_HOST:$VPS_PORT"
+          echo "Loaded key fingerprint(s):"
+          ssh-add -l
+          echo "First line of key file (sanity):"
+          head -1 "$HOME/vps_key"
+          echo "::endgroup::"
 
       - name: Add VPS host key
         run: |
