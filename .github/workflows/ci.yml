@@ -59,22 +59,18 @@ jobs:
             echo "::error::VPS_SSH_KEY secret is empty — set it in repo Settings > Secrets."
             exit 1
           fi
-          # The secret may be stored either as a raw PEM (multiline) or as
-          # base64 (single line, recommended — avoids any newline/CRLF
-          # corruption when setting the secret). Detect and decode.
-          if printf '%s' "$VPS_SSH_KEY" | grep -qE '^[A-Za-z0-9+/]+=*$'; then
-            printf '%s' "$VPS_SSH_KEY" | base64 -d > "$HOME/vps_key"
-          else
-            printf '%s\n' "$VPS_SSH_KEY" > "$HOME/vps_key"
-          fi
-          # Strip carriage returns (Windows CRLF), ensure trailing newline.
+          # Write the raw PEM secret to a file. GitHub secrets preserve
+          # newlines, so this round-trips a multiline private key faithfully.
+          printf '%s\n' "$VPS_SSH_KEY" > "$HOME/vps_key"
+          # Strip any carriage returns (Windows CRLF) and lock perms.
           sed -i 's/\r$//' "$HOME/vps_key"
           chmod 600 "$HOME/vps_key"
           eval "$(ssh-agent -s)"
           ssh-add "$HOME/vps_key"
-          # DEBUG: show the fingerprint(s) the agent will offer, and the
-          # resolved target. Compare the fingerprint to:
+          # DEBUG: show the fingerprint the agent will offer, and the first
+          # line of the key file. Compare the fingerprint to:
           #   ssh-keygen -l -f ~/.ssh/japnam-deploy   (on your machine)
+          # If they differ, the VPS_SSH_KEY secret is NOT japnam-deploy.
           echo "::group::ssh debug"
           echo "Target: $VPS_USER@$VPS_HOST:$VPS_PORT"
           echo "Loaded key fingerprint(s):"
