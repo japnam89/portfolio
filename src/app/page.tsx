@@ -58,7 +58,6 @@ export default async function Home() {
             {[
               ["Certifications", "/certificates"],
               ["Photography", "/photography"],
-              ["Resume", "/resume"],
             ].map(([label, href]) => (
               <Link
                 key={href}

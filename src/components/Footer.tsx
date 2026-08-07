@@ -8,12 +8,6 @@ export default function Footer() {
         <span>© {year} Japnam Singh. Built with Next.js &amp; Node.js.</span>
         <div className="flex items-center gap-5">
           <BuyMeCoffee />
-          <a
-            href="/resume"
-            className="font-medium text-zinc-700 transition-colors hover:text-blue-600"
-          >
-            Resume ↗
-          </a>
         </div>
       </div>
     </footer>

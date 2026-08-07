@@ -16,7 +16,6 @@ const links = [
   { href: "/photography", label: "Photography" },
   { href: "/blog", label: "Blog" },
   { href: "/social", label: "Social" },
-  { href: "/resume", label: "Resume" },
 ];
 
 export default function Navbar() {
