@@ -12,7 +12,7 @@
 services:
   web:
     build:
-      context: /opt/data/portfolio
+      context: .
       dockerfile: Dockerfile
     image: japnam-web:latest
     restart: unless-stopped
