@@ -40,12 +40,14 @@ export const certificates: Certificate[] = [
     issuer: "Microsoft",
     year: "2024",
     link: "https://learn.microsoft.com/en-us/users/JapnamSingh-7668/credentials/6D6ECFBC714FC41C",
+    image: "/certs/azure-ai-fundamentals.svg",
   },
   {
     name: "Microsoft Certified: Azure Solutions Architect Expert",
     issuer: "Microsoft",
     year: "2024",
     link: "https://learn.microsoft.com/en-us/credentials/",
+    image: "/certs/azure-solutions-architect.svg",
   },
   {
     name: "AI Skills Fest 2026",
@@ -59,5 +61,6 @@ export const certificates: Certificate[] = [
     issuer: "Microsoft",
     year: "2026",
     link: "https://learn.microsoft.com/en-us/users/JapnamSingh-7668/credentials/51961FDE145F32E7",
+    image: "/certs/azure-ai-engineer.svg",
   },
 ];
