@@ -39,15 +39,30 @@ jobs:
 
   deploy:
     name: Deploy to VPS
-    # Only deploy on a push to main (never on PRs).
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    # Only deploy on a push to main or a manual dispatch (never on PRs).
+    if: >-
+      (github.ref == 'refs/heads/main' && github.event_name == 'push')
+      || github.event_name == 'workflow_dispatch'
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Set up SSH agent
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+      - name: Prepare SSH key (normalize CRLF/newlines)
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "$VPS_SSH_KEY" ]; then
+            echo "::error::VPS_SSH_KEY secret is empty — set it in repo Settings > Secrets."
+            exit 1
+          fi
+          # Write key to a file, strip carriage returns (Windows CRLF is a
+          # common cause of 'error in libcrypto' from ssh-add), ensure trailing
+          # newline, lock perms.
+          printf '%s\n' "$VPS_SSH_KEY" > "$HOME/vps_key"
+          sed -i 's/\r$//' "$HOME/vps_key"
+          chmod 600 "$HOME/vps_key"
+          eval "$(ssh-agent -s)"
+          ssh-add "$HOME/vps_key"
 
       - name: Add VPS host key
         run: |
