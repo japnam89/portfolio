@@ -8,10 +8,13 @@
 # -> this service automatically.
 #
 # Usage (on the VPS, in the repo dir):
+#   cp .env.example .env   # then fill in real values (RUSTFS_*, passwords)
 #   docker compose up -d --build
 # DNS already points japnam.tech at this VPS, so Traefik starts serving it.
 #
-# Secrets inline for simplicity (single-tenant VPS). Move to env_file if committed.
+# Secrets are NOT in this file — they come from the gitignored .env via
+# ${VAR} interpolation (Docker Compose auto-loads .env in this dir).
+# Never commit .env; .env.example documents the required variables.
 
 services:
   web:
@@ -28,17 +31,17 @@ services:
     environment:
       NODE_ENV: production
       PORT: "3000"
-      RUSTFS_ACCESS_KEY: "JfMzX0Xv5ySZW4aTMFKi"
-      RUSTFS_SECRET_KEY: "RkGDLBKE7BK1nHWAjgEGdWUcZAWFfpH5zrn0aXpv"
-      RUSTFS_ENDPOINT: "https://rustfs-dkgj.srv1865422.hstgr.cloud"
-      RUSTFS_REGION: "us-east-1"
-      RUSTFS_BUCKET: "photos"
-      RUSTFS_URL_EXPIRES: "3600"
-      POST_ADMIN_PASSWORD: "CHANGE_ME"
-      RESEND_API_KEY: "CHANGE_ME"
-      CONTACT_TO_EMAIL: "you@example.com"
-      CONTACT_FROM_EMAIL: "Portfolio <onboarding@resend.dev>"
-      NEXT_PUBLIC_PAYPAL_URL: "https://paypal.me/japnam89"
+      RUSTFS_ACCESS_KEY: "${RUSTFS_ACCESS_KEY}"
+      RUSTFS_SECRET_KEY: "${RUSTFS_SECRET_KEY}"
+      RUSTFS_ENDPOINT: "${RUSTFS_ENDPOINT}"
+      RUSTFS_REGION: "${RUSTFS_REGION}"
+      RUSTFS_BUCKET: "${RUSTFS_BUCKET}"
+      RUSTFS_URL_EXPIRES: "${RUSTFS_URL_EXPIRES}"
+      POST_ADMIN_PASSWORD: "${POST_ADMIN_PASSWORD}"
+      RESEND_API_KEY: "${RESEND_API_KEY}"
+      CONTACT_TO_EMAIL: "${CONTACT_TO_EMAIL}"
+      CONTACT_FROM_EMAIL: "${CONTACT_FROM_EMAIL}"
+      NEXT_PUBLIC_PAYPAL_URL: "${NEXT_PUBLIC_PAYPAL_URL}"
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.japnam.rule=Host(`japnam.tech`) || Host(`www.japnam.tech`)'
