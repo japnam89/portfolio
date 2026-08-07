@@ -1,11 +1,6 @@
 import Image from "next/image";
 import { skills } from "@/data/projects";
 
-const portraits = [
-  { src: "/azure-architect-1.jpg", alt: "Japnam Singh as a Certified Azure Architect" },
-  { src: "/azure-architect-2.jpg", alt: "Japnam Singh with Azure cloud holographic console" },
-];
-
 // "/about". Shows the AI-generated Azure Architect portrait + bio + skills.
 export default function About() {
   return (
@@ -16,34 +11,18 @@ export default function About() {
         <div className="absolute inset-0 bg-grid [mask-image:radial-gradient(70%_60%_at_50%_30%,#000,transparent)]" />
       </div>
 
-      <div className="mx-auto grid max-w-5xl items-start gap-10 px-6 py-20 lg:grid-cols-[300px_1fr]">
-        {/* Portrait(s) */}
+      <div className="mx-auto grid max-w-5xl items-start gap-10 px-6 py-20 lg:grid-cols-[320px_1fr]">
+        {/* Portrait — single AI-generated Azure Architect photo */}
         <div className="stagger">
-          <div className="relative aspect-square overflow-hidden rounded-3xl border border-white/60 shadow-2xl">
+          <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/60 shadow-2xl">
             <Image
-              src={portraits[0].src}
-              alt={portraits[0].alt}
+              src="/azure-architect-1.jpg"
+              alt="Japnam Singh as a Certified Azure Architect"
               fill
               priority
-              sizes="(max-width: 1024px) 90vw, 300px"
+              sizes="(max-width: 1024px) 90vw, 320px"
               className="object-cover"
             />
-          </div>
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            {portraits.map((p) => (
-              <div
-                key={p.src}
-                className="relative aspect-square overflow-hidden rounded-2xl border border-white/60 shadow-md"
-              >
-                <Image
-                  src={p.src}
-                  alt={p.alt}
-                  fill
-                  sizes="150px"
-                  className="object-cover"
-                />
-              </div>
-            ))}
           </div>
         </div>
 

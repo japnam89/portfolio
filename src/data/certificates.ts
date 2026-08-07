@@ -26,14 +26,14 @@ export const certificates: Certificate[] = [
     issuer: "Microsoft",
     year: "2021",
     link: "https://www.credly.com/badges/8ea1b77a-84ea-4cb0-8235-7cb880305cc6",
-    image: "https://images.credly.com/size/340x340/images/be8fcaeb-c769-4858-b567-ffaaa73ce8cf/image.png",
+    image: "/certs/azure-fundamentals.png",
   },
   {
     name: "Exam 483: Programming in C#",
     issuer: "Microsoft",
     year: "2021",
     link: "https://www.credly.com/badges/d4095f57-2ea1-48d7-851b-13070c97c1cd",
-    image: "https://images.credly.com/size/340x340/images/78e39333-d0db-4931-b231-13bdb37040cc/Programming_in_C_23-01.png",
+    image: "/certs/csharp-exam-483.png",
   },
   {
     name: "Microsoft Certified: Azure AI Fundamentals",
@@ -52,7 +52,7 @@ export const certificates: Certificate[] = [
     issuer: "Microsoft",
     year: "2026",
     link: "https://www.credly.com/badges/29513636-e72a-4d0c-b5df-8a5c34b1ff55",
-    image: "https://images.credly.com/size/340x340/images/082c8d0c-5232-4597-b6c4-6bebcc4f3046/blob",
+    image: "/certs/ai-skills-fest-2026.png",
   },
   {
     name: "Microsoft Certified: Azure AI Engineer Associate",
