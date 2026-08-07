@@ -62,8 +62,8 @@ rm -rf node_modules .next && npm ci --omit=dev && npm run build
 
 ## 3. Manual deploy on the host (alternative)
 SSH into the Node hosting box (hPanel → Advanced → SSH Access; the host is the
-per-account one, e.g. `srv1865422…`, **not** the RustFS storage IP
-`2.25.91.163:32773`):
+per-account one, e.g. `srv1865422…` (the VPS host), **not** the RustFS
+Object Storage gateway `rustfs-dkgj.srv1865422.hstgr.cloud`):
 
 ```bash
 cd ~/portfolio
@@ -76,40 +76,45 @@ Prefer hPanel's managed Start command over a hand-run `nohup` process (it
 survives reboots). The `prestart` npm script auto-runs `next build` if `.next`
 is missing, so a bare `npm run start` won't fail with "no production build".
 
-## 4. Environment variables (DO NOT commit — set in hPanel)
+## 4. Environment variables (DO NOT commit — set in hPanel or .env)
 hPanel → the hosting → **Environment / Variables** (or `.env` editor). Copy
 from `.env.example`. The critical ones:
 
-```
-RESEND_API_KEY=...
-CONTACT_TO_EMAIL=...
-CONTACT_FROM_EMAIL=...
-RUSTFS_ENDPOINT=http://2.25.91.163:32773
+```bash
+# Blog admin + notifications (optional)
+POST_ADMIN_PASSWORD=<set-a-strong-password>
+RESEND_API_KEY=<resend-api-key>
+CONTACT_TO_EMAIL=<your-email>
+CONTACT_FROM_EMAIL=Portfolio <onboarding@resend.dev>
+
+# RustFS / Hostinger Object Storage (private photo bucket)
+RUSTFS_ENDPOINT=https://rustfs-dkgj.srv1865422.hstgr.cloud
 RUSTFS_REGION=us-east-1
-RUSTFS_ACCESS_KEY=CTzANZ5xQ9gwielhjUQ8
-RUSTFS_SECRET_KEY=<real secret — revealed when the key is created in hPanel>
-RUSTFS_SESSION_TOKEN=<only if using temporary/session creds>
+RUSTFS_ACCESS_KEY=<rustfs-access-key>
+RUSTFS_SECRET_KEY=<rustfs-secret-key>
+RUSTFS_BUCKET=photos
 RUSTFS_URL_EXPIRES=3600
 ```
 
-`.env*` is git-ignored, so local `.env.local` never gets pushed.
+On the **VPS / Docker** deployment, these come from the gitignored `.env`
+file (see `docker-compose.yml`): `cp .env.example .env` then fill in the
+real values. `.env*` is git-ignored, so local secrets never get pushed.
 
 **Without `RUSTFS_SECRET_KEY` the app still builds and serves (HTTP 200); the
-gallery just returns an empty placeholder.** This is by design — set the var to
-populate the gallery.
+gallery just returns an empty placeholder.** This is by design — set the var
+to populate the gallery.
 
 ## 5. Photography gallery — credential notes
-- The gallery fetches `/api/photos`, which lists the `photos/` prefix of the
-  bucket and mints presigned GET URLs server-side (using the `aws4` lib).
-- Endpoint is `http://2.25.91.163:32773` (path-style, bucket at root).
-- **You must supply `RUSTFS_SECRET_KEY`** — the actual Secret Access Key for
-  `CTzANZ5xQ9gwielhjUQ8`. The 40-char strings tried during setup were NOT it;
-  the real one is shown once when the key is created in hPanel. Without it the
-  route returns an empty list and the gallery shows a "curating" placeholder.
-- If you only have a session (temporary) credential, also set
-  `RUSTFS_SESSION_TOKEN` to the token from a working share URL.
-- Alternatively, set `DEMO_PHOTO_URLS` to a comma-separated list of presigned
-  URLs to verify the gallery end-to-end before wiring the real secret.
+- The gallery fetches `/api/photos`, which lists the `photos` bucket and mints
+  presigned GET URLs server-side using the AWS SDK v3 `S3Client`
+  (`forcePathStyle: true`).
+- Endpoint is `https://rustfs-dkgj.srv1865422.hstgr.cloud` (the Hostinger
+  Object Storage gateway; path-style, bucket at root).
+- **You must supply `RUSTFS_ACCESS_KEY` + `RUSTFS_SECRET_KEY`** — the
+  credentials for your RustFS bucket. Without them the route returns an empty
+  list and the gallery shows a "curating" placeholder.
+- Alternatively, set `DEMO_PHOTO_URLS` to a comma-separated list of image URLs
+  to verify the gallery end-to-end before wiring the real secret.
 
 ## 6. Verify
 After deploy, visit `https://japnam.tech/`. Every page should return 200 and
