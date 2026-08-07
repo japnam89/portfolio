@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { marked } from "marked";
 import { getPost } from "@/lib/blog";
+import PostAdminControls from "@/components/PostAdminControls";
 
 export const dynamic = "force-dynamic";
 
@@ -53,6 +54,7 @@ export default async function PostPage({
           className="mt-6 w-full rounded-xl"
         />
       )}
+      <PostAdminControls slug={post.slug} />
       <div
         className="prose mt-8 max-w-none text-zinc-800"
         dangerouslySetInnerHTML={{ __html: html }}

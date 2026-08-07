@@ -90,6 +90,28 @@ export function createPost(input: {
   return getPost(unique)!;
 }
 
+export function updatePost(
+  slug: string,
+  input: { title?: string; content?: string; excerpt?: string; cover?: string },
+): Post | undefined {
+  const existing = getPost(slug);
+  if (!existing) return undefined;
+  const next = {
+    title: input.title?.trim() || existing.title,
+    excerpt:
+      input.excerpt?.trim() ||
+      (input.content
+        ? input.content.slice(0, 160).replace(/[#>*_`\-]/g, " ").replace(/\n/g, " ").trim()
+        : existing.excerpt),
+    content: input.content ?? existing.content,
+    cover: input.cover === undefined ? existing.cover : input.cover || null,
+  };
+  db.prepare(
+    `UPDATE posts SET title=@title, excerpt=@excerpt, content=@content, cover=@cover WHERE slug=@slug`,
+  ).run({ ...next, slug });
+  return getPost(slug);
+}
+
 export function deletePost(slug: string): boolean {
   const info = db.prepare("DELETE FROM posts WHERE slug = ?").run(slug);
   return info.changes > 0;

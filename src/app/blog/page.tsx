@@ -63,6 +63,12 @@ export default function Blog() {
                 <p className="mt-3 text-zinc-600">{p.excerpt}</p>
               )}
             </Link>
+            <Link
+              href={`/admin/posts/${p.slug}/edit`}
+              className="mt-2 inline-block text-xs font-medium text-zinc-400 hover:text-zinc-700"
+            >
+              Edit
+            </Link>
           </article>
         ))}
       </div>
