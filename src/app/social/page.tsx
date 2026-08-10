@@ -23,7 +23,7 @@ export default function Social() {
       <p className="mt-10 text-sm text-zinc-400">
         Prefer email?{" "}
         <a
-          href="mailto:hello@japnam.tech"
+          href="mailto:info@japnam.com"
           className="text-zinc-600 underline hover:text-blue-600"
         >
           Get in touch

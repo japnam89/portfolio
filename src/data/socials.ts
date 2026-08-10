@@ -33,7 +33,7 @@ export const socials: Social[] = [
   {
     name: "Email",
     handle: "Get in touch",
-    href: "mailto:hello@japnam.tech",
+    href: "mailto:info@japnam.com",
     desc: "Prefer email? Send a note.",
     icon: "email",
   },
