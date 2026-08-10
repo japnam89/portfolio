@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
-import LogoMark from "@/components/LogoMark";
 
 // A navigation bar. `Link` is Next.js's special anchor tag — client-side navigation.
 // Becomes a hamburger menu on small screens. Social links are intentionally
@@ -30,7 +30,13 @@ export default function Navbar() {
           onClick={() => setOpen(false)}
         >
           <span className="flex items-center justify-center rounded-xl bg-white p-1.5 shadow-sm ring-1 ring-zinc-200/70 transition-transform group-hover:scale-105">
-            <LogoMark size={22} className="rounded-md" />
+            <Image
+              src="/logo.png"
+              alt="Japnam Singh"
+              width={22}
+              height={22}
+              className="rounded-md"
+            />
           </span>
           <span className="text-base font-semibold tracking-tight text-zinc-900">
             Japnam<span className="text-gradient">.tech</span>
