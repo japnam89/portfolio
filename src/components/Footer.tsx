@@ -1,4 +1,5 @@
 import BuyMeCoffee from "./BuyMeCoffee";
+import SocialLinks from "./SocialLinks";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -7,6 +8,7 @@ export default function Footer() {
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-8 text-sm text-zinc-500">
         <span>© {year} Japnam Singh. Built with Next.js &amp; Node.js.</span>
         <div className="flex items-center gap-5">
+          <SocialLinks variant="icons" />
           <BuyMeCoffee />
         </div>
       </div>
