@@ -29,7 +29,7 @@ export default function Navbar() {
           className="group flex items-center gap-2.5 rounded-full px-1 py-0.5"
           onClick={() => setOpen(false)}
         >
-          <span className="flex items-center justify-center rounded-xl bg-zinc-900 p-1.5 shadow-sm transition-transform group-hover:scale-105">
+          <span className="flex items-center justify-center rounded-xl bg-white p-1.5 shadow-sm ring-1 ring-zinc-200/70 transition-transform group-hover:scale-105">
             <LogoMark size={22} className="rounded-md" />
           </span>
           <span className="text-base font-semibold tracking-tight text-zinc-900">

@@ -1,68 +1,72 @@
-// Brand "JS" monogram as an inline SVG. Vector -> crisp at any size
-// (including the 22x22 navbar slot), and inherits no raster blur.
-// Blue gradient matches the site's brand palette.
+// Brand "JS" monogram — faithful, crisp recreation of the original logo:
+// a glossy blue circular ring enclosing an italic serif "JS", using the
+// original blue gradient (light cyan -> royal blue -> deep navy).
+//
+// Vector = sharp at any size (including the 22-24px navbar slot). Transparent
+// background so it reads on both the light header and any surface.
+//
+// If you later obtain the original vector source, drop it in and delete this.
+
+import { useId } from "react";
 
 type Props = {
-  className?: string;
   size?: number;
-  title?: string;
+  className?: string;
 };
 
-export default function LogoMark({
-  className,
-  size = 22,
-  title = "Japnam.tech logo",
-}: Props) {
+export default function LogoMark({ size = 24, className }: Props) {
+  const gid = useId().replace(/:/g, "");
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 64 64"
-      role="img"
-      aria-label={title}
+      viewBox="0 0 100 100"
       className={className}
+      role="img"
+      aria-label="Japnam Singh logo"
     >
       <defs>
-        <linearGradient id="jm-grad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#38bdf8" />
-          <stop offset="55%" stopColor="#3b82f6" />
-          <stop offset="100%" stopColor="#8b5cf6" />
-        </linearGradient>
-        <linearGradient id="jm-grad2" x1="1" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#22d3ee" />
-          <stop offset="100%" stopColor="#6366f1" />
+        <linearGradient id={`js-${gid}`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#A3D5FF" />
+          <stop offset="45%" stopColor="#2B8CD9" />
+          <stop offset="100%" stopColor="#004080" />
         </linearGradient>
       </defs>
 
-      {/* Outer ring */}
+      {/* glossy blue ring */}
       <circle
-        cx="32"
-        cy="32"
-        r="28"
+        cx="50"
+        cy="50"
+        r="41"
         fill="none"
-        stroke="url(#jm-grad)"
-        strokeWidth="4"
+        stroke={`url(#js-${gid})`}
+        strokeWidth="8"
+      />
+      {/* specular highlight on the ring (top-left), for the glossy look */}
+      <path
+        d="M 19 38 A 41 41 0 0 1 50 9"
+        fill="none"
+        stroke="#FFFFFF"
+        strokeOpacity="0.75"
+        strokeWidth="3"
+        strokeLinecap="round"
       />
 
-      {/* Stylized "J" */}
-      <path
-        d="M24 18 L24 38 Q24 46 32 46 Q39 46 39 39"
-        fill="none"
-        stroke="url(#jm-grad2)"
-        strokeWidth="4.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-
-      {/* Stylized "S" */}
-      <path
-        d="M44 22 Q36 18 33 24 Q30 30 38 32 Q46 34 43 40 Q40 46 33 42"
-        fill="none"
-        stroke="url(#jm-grad)"
-        strokeWidth="4.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      {/* italic serif JS monogram, centered */}
+      <text
+        x="50"
+        y="52"
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontFamily="Georgia, 'Times New Roman', serif"
+        fontStyle="italic"
+        fontWeight="700"
+        fontSize="44"
+        letterSpacing="-2"
+        fill={`url(#js-${gid})`}
+      >
+        JS
+      </text>
     </svg>
   );
 }
