@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { getPost, listPosts } from "@/lib/blog";
 import { renderMarkdown } from "@/lib/markdown";
 import { presignGet } from "@/lib/hostinger";
 import PostAdminControls from "@/components/PostAdminControls";
+import ShareArticle from "@/components/ShareArticle";
 
 export const dynamic = "force-dynamic";
 
@@ -55,6 +57,13 @@ export default async function PostPage({
     }
   }
 
+  // Absolute URL for share targets (X/LinkedIn/Facebook prefill + copy-link).
+  const h = await headers();
+  const host = h.get("host") ?? "japnam.tech";
+  const proto = h.get("x-forwarded-proto") ?? "https";
+  const origin = `${proto}://${host}`;
+  const shareUrl = `${origin}/blog/${post.slug}`;
+
   // Related posts: other posts (most recent first), excluding the current one.
   const related = listPosts()
     .filter((p) => p.slug !== post.slug)
@@ -79,6 +88,11 @@ export default async function PostPage({
       <div
         className="prose mt-8 max-w-none text-zinc-800"
         dangerouslySetInnerHTML={{ __html: html }}
+      />
+
+      <ShareArticle
+        title={post.title}
+        url={shareUrl}
       />
 
       {related.length > 0 && (
