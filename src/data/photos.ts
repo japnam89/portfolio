@@ -7,8 +7,10 @@
 
 export type PhotoMeta = {
   alt: string; // accessible description (required by good practice)
-  title?: string; // optional caption shown on hover + lightbox
+  title?: string; // optional caption shown on the card + lightbox
   location?: string; // optional, e.g. "Reykjavík, Iceland"
+  date?: string; // optional, e.g. "June 2024" or "2024-06"
+  description?: string; // optional longer note shown in the lightbox
 };
 
 export const photoMeta: Record<string, PhotoMeta> = {
@@ -16,21 +18,29 @@ export const photoMeta: Record<string, PhotoMeta> = {
     alt: "A frame from the photography collection",
     title: "DSC07343",
     location: "Add location",
+    date: "Add date",
+    description: "Add a short description of this frame.",
   },
   "DSC07344.JPG": {
     alt: "A frame from the photography collection",
     title: "DSC07344",
     location: "Add location",
+    date: "Add date",
+    description: "Add a short description of this frame.",
   },
   "DSC07659.JPG": {
     alt: "A frame from the photography collection",
     title: "DSC07659",
     location: "Add location",
+    date: "Add date",
+    description: "Add a short description of this frame.",
   },
   "DSC08068.JPG": {
     alt: "A frame from the photography collection",
     title: "DSC08068",
     location: "Add location",
+    date: "Add date",
+    description: "Add a short description of this frame.",
   },
 };
 

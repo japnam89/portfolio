@@ -7,8 +7,9 @@ import { metaFor } from "@/data/photos";
 type Photo = { key: string; src: string };
 
 // Client component: fetches presigned URLs from /api/photos, renders a
-// responsive grid, and a click-to-zoom lightbox. Presigned URLs are short-lived,
-// so it silently re-fetches before they expire and on any load error.
+// responsive grid with always-visible captions, and a click-to-zoom lightbox
+// showing the full metadata. Presigned URLs are short-lived, so it silently
+// re-fetches before they expire and on any load error.
 export default function PhotoGallery() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [active, setActive] = useState<Photo | null>(null);
@@ -30,9 +31,6 @@ export default function PhotoGallery() {
     }
   }, []);
 
-  // Initial load. `load` is a stable useCallback([]), so this is the intended
-  // "fetch on mount" pattern (no stale closure); the lint rule is a false
-  // positive for this case.
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
@@ -70,47 +68,49 @@ export default function PhotoGallery() {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+      <p className="mb-6 text-sm text-zinc-500">
+        {photos.length} {photos.length === 1 ? "photo" : "photos"} · click any
+        frame to view it full size with details.
+      </p>
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {photos.map((photo) => {
           const meta = metaFor(photo.key);
+          const sub = [meta.location, meta.date].filter(Boolean).join(" · ");
           return (
             <button
               key={photo.key}
               type="button"
               onClick={() => setActive(photo)}
               aria-label={meta.alt}
-              className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-zinc-100 ring-1 ring-zinc-200 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              className="group flex flex-col overflow-hidden rounded-2xl bg-white text-left shadow-sm ring-1 ring-zinc-200/70 transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
-              {failed[photo.key] ? (
-                <div className="flex h-full w-full items-center justify-center p-4 text-center text-xs text-zinc-400">
-                  {meta.alt}
-                </div>
-              ) : (
-                <Image
-                  src={photo.src}
-                  alt={meta.alt}
-                  fill
-                  unoptimized
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  onError={() => onImgError(photo.key)}
-                />
-              )}
+              <div className="relative aspect-[4/3] overflow-hidden bg-zinc-100">
+                {failed[photo.key] ? (
+                  <div className="flex h-full w-full items-center justify-center p-4 text-center text-xs text-zinc-400">
+                    {meta.alt}
+                  </div>
+                ) : (
+                  <Image
+                    src={photo.src}
+                    alt={meta.alt}
+                    fill
+                    unoptimized
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    onError={() => onImgError(photo.key)}
+                  />
+                )}
+              </div>
 
-              {(meta.title || meta.location) && (
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent px-3 pb-2.5 pt-8 text-left">
-                  {meta.title && (
-                    <p className="text-sm font-medium leading-tight text-white drop-shadow">
-                      {meta.title}
-                    </p>
-                  )}
-                  {meta.location && (
-                    <p className="mt-0.5 text-xs leading-tight text-zinc-200 drop-shadow">
-                      {meta.location}
-                    </p>
-                  )}
-                </div>
-              )}
+              <div className="flex flex-col gap-0.5 px-4 py-3">
+                <p className="text-sm font-semibold leading-tight text-zinc-900">
+                  {meta.title ?? meta.alt}
+                </p>
+                {sub && (
+                  <p className="text-xs leading-tight text-zinc-500">{sub}</p>
+                )}
+              </div>
             </button>
           );
         })}
@@ -134,29 +134,36 @@ export default function PhotoGallery() {
           </button>
 
           <figure
-            className="flex max-h-[90vh] max-w-[90vw] flex-col items-center"
+            className="flex max-h-[92vh] max-w-[92vw] flex-col items-center"
             onClick={(e) => e.stopPropagation()}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={active.src}
               alt={metaFor(active.key).alt}
-              className="max-h-[80vh] max-w-[90vw] rounded-lg object-contain"
+              className="max-h-[72vh] max-w-[92vw] rounded-lg object-contain"
             />
-            {(metaFor(active.key).title || metaFor(active.key).location) && (
-              <figcaption className="mt-3 text-center">
-                {metaFor(active.key).title && (
-                  <p className="text-sm font-medium text-white">
-                    {metaFor(active.key).title}
-                  </p>
-                )}
-                {metaFor(active.key).location && (
-                  <p className="text-xs text-zinc-400">
-                    {metaFor(active.key).location}
-                  </p>
-                )}
-              </figcaption>
-            )}
+            <figcaption className="mt-4 w-full max-w-2xl text-center">
+              {metaFor(active.key).title && (
+                <p className="text-base font-semibold text-white">
+                  {metaFor(active.key).title}
+                </p>
+              )}
+              {[metaFor(active.key).location, metaFor(active.key).date]
+                .filter(Boolean)
+                .join(" · ") && (
+                <p className="mt-0.5 text-sm text-zinc-300">
+                  {[metaFor(active.key).location, metaFor(active.key).date]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </p>
+              )}
+              {metaFor(active.key).description && (
+                <p className="mx-auto mt-2 max-w-prose text-sm leading-relaxed text-zinc-400">
+                  {metaFor(active.key).description}
+                </p>
+              )}
+            </figcaption>
           </figure>
         </div>
       )}
