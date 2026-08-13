@@ -14,6 +14,7 @@ const links = [
   { href: "/projects", label: "Projects" },
   { href: "/certificates", label: "Certifications" },
   { href: "/photography", label: "Photography" },
+  { href: "/domains", label: "Domains" },
   { href: "/blog", label: "Blog" },
   { href: "/social", label: "Social" },
 ];
