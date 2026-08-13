@@ -47,4 +47,11 @@ export const domains: Domain[] = [
     forSale: true,
     description: "Descriptive, brandable for a Kubernetes/cloud project.",
   },
+  {
+    name: "ivaan.eth",
+    acquiredVia: "ETH World",
+    wonDate: "2025",
+    forSale: false,
+    description: "Held — not for sale.",
+  },
 ];
