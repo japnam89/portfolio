@@ -44,6 +44,12 @@ const services = [
     desc: "Free n8n automation & AI workflow templates.",
     icon: "⚡",
   },
+  {
+    href: "/contact",
+    label: "Azure 1:1 Training",
+    desc: "Personal cloud/architecture coaching with a Staff Azure Architect.",
+    icon: "🎓",
+  },
 ];
 
 export default function Navbar() {

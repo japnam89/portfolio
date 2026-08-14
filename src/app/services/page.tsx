@@ -36,6 +36,13 @@ const services = [
     desc: "Free n8n workflow templates — automation, AI, DevOps and data pipelines you can import and adapt.",
     cta: "Browse templates →",
   },
+  {
+    href: "/contact",
+    icon: "🎓",
+    title: "Azure 1:1 Training",
+    desc: "Personal coaching with a Staff Azure Architect — landing zones, AKS, Terraform, identity, and solution design, tailored to your level.",
+    cta: "Book a session →",
+  },
 ];
 
 export default function ServicesPage() {
