@@ -37,7 +37,7 @@ const services = [
     cta: "Browse templates →",
   },
   {
-    href: "/contact",
+    href: "/azure-training",
     icon: "🎓",
     title: "Azure 1:1 Training",
     desc: "Personal coaching with a Staff Azure Architect — landing zones, AKS, Terraform, identity, and solution design, tailored to your level.",

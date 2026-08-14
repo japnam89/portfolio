@@ -45,7 +45,7 @@ const services = [
     icon: "⚡",
   },
   {
-    href: "/contact",
+    href: "/azure-training",
     label: "Azure 1:1 Training",
     desc: "Personal cloud/architecture coaching with a Staff Azure Architect.",
     icon: "🎓",
