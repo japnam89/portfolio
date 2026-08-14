@@ -49,7 +49,7 @@ export default function ConvertPage() {
   return (
     <section className="mx-auto max-w-2xl px-6 py-20">
       <div className="flex items-center gap-3">
-        <span className="text-3xl">📄➡️📕</span>
+        <span className="text-3xl">📄</span>
         <h1 className="text-4xl font-bold tracking-tight">Doc to PDF</h1>
       </div>
       <p className="mt-4 text-lg text-zinc-600">
