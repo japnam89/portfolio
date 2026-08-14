@@ -12,6 +12,7 @@ import {
   S3Client,
   ListObjectsV2Command,
   GetObjectCommand,
+  PutObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -62,6 +63,42 @@ export async function presignGet(key: string): Promise<string> {
   return getSignedUrl(
     client,
     new GetObjectCommand({ Bucket: bucket, Key: key }),
-    { expiresIn: expires }
+    { expiresIn: expires },
+  );
+}
+
+// Upload an object's body (Buffer) into the bucket. Used by the /convert
+// pipeline to park the user's uploaded doc and the resulting PDF.
+// `contentType` is set so browsers/downloads open it correctly.
+export async function putObject(
+  key: string,
+  body: Buffer,
+  contentType: string,
+): Promise<void> {
+  await client.send(
+    new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      Body: body,
+      ContentType: contentType,
+    }),
+  );
+}
+
+// Mint a presigned PUT URL so a browser can upload a file directly to the
+// bucket without proxying the bytes through the Next.js server.
+export async function presignPut(
+  key: string,
+  contentType: string,
+  expiresIn = 600,
+): Promise<string> {
+  return getSignedUrl(
+    client,
+    new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      ContentType: contentType,
+    }),
+    { expiresIn },
   );
 }

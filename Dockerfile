@@ -28,8 +28,15 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 # Runtime deps + build tools so better-sqlite3 loads/relinks if needed.
+# Also installs LibreOffice (headless) for the /convert doc->pdf feature.
+# Version pinned to bookworm's packaged release (4:7.4.7-1+deb12u14) so the
+# image builds reproducibly and doesn't drift between VPS rebuilds.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 make g++ \
+    libreoffice-writer=4:7.4.7-1+deb12u14 \
+    libreoffice-impress=4:7.4.7-1+deb12u14 \
+    libreoffice-calc=4:7.4.7-1+deb12u14 \
+    libreoffice-core=4:7.4.7-1+deb12u14 \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next

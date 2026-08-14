@@ -15,6 +15,8 @@ const links = [
   { href: "/certificates", label: "Certifications" },
   { href: "/photography", label: "Photography" },
   { href: "/domains", label: "Domains" },
+  { href: "/diagrams", label: "Diagrams" },
+  { href: "/convert", label: "Convert" },
   { href: "/blog", label: "Blog" },
   { href: "/social", label: "Social" },
 ];
