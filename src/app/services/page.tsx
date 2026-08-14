@@ -29,6 +29,13 @@ const services = [
     desc: "Sequence and architecture diagrams rendered live from Mermaid (.mmd) definitions — handy for parking flows you want to reference later.",
     cta: "View diagrams →",
   },
+  {
+    href: "/workflows",
+    icon: "⚡",
+    title: "Workflow Templates",
+    desc: "Free n8n workflow templates — automation, AI, DevOps and data pipelines you can import and adapt.",
+    cta: "Browse templates →",
+  },
 ];
 
 export default function ServicesPage() {

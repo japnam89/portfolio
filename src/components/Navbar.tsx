@@ -38,6 +38,12 @@ const services = [
     desc: "Sequence & architecture diagrams (Mermaid).",
     icon: "📊",
   },
+  {
+    href: "/workflows",
+    label: "Workflow Templates",
+    desc: "Free n8n automation & AI workflow templates.",
+    icon: "⚡",
+  },
 ];
 
 export default function Navbar() {
