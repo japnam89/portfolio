@@ -14,6 +14,7 @@ export default function Photography() {
   return (
     <section className="mx-auto max-w-5xl px-6 py-20">
       <div className="flex items-center gap-3">
+        <span className="text-3xl">📷</span>
         <Image
           src="/logo-photography.png"
           alt="Photography logo"

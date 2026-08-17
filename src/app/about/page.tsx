@@ -31,7 +31,8 @@ export default function About() {
           <p className="text-sm font-semibold uppercase tracking-widest text-blue-500">
             About me
           </p>
-          <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
+          <h1 className="mt-3 flex items-center gap-3 text-4xl font-bold tracking-tight sm:text-5xl">
+            <span className="text-3xl">👤</span>
             <span className="text-gradient">Japnam Singh</span>
           </h1>
           <p className="mt-6 text-lg leading-8 text-zinc-600">

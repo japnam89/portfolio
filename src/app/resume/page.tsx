@@ -14,7 +14,8 @@ export default function ResumePage() {
       <div className="mx-auto max-w-3xl px-6 py-20">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+            <h1 className="flex items-center gap-3 text-4xl font-bold tracking-tight sm:text-5xl">
+              <span className="text-3xl">📄</span>
               <span className="text-gradient">{resume.name}</span>
             </h1>
             <p className="mt-1 text-lg text-zinc-600">{resume.title}</p>

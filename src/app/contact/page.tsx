@@ -53,7 +53,8 @@ export default function Contact() {
       </div>
 
       <div className="mx-auto max-w-2xl px-6 py-20">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+        <h1 className="flex items-center gap-3 text-4xl font-bold tracking-tight sm:text-5xl">
+          <span className="text-3xl">✉️</span>
           <span className="text-gradient">Contact me</span>
         </h1>
         <p className="mt-4 text-lg text-zinc-600">

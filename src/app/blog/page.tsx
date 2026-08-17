@@ -45,7 +45,10 @@ export default async function Blog() {
   return (
     <section className="mx-auto max-w-3xl px-6 py-20">
       <div className="flex items-center justify-between">
-        <h1 className="text-4xl font-bold tracking-tight">Blog</h1>
+        <h1 className="flex items-center gap-3 text-4xl font-bold tracking-tight">
+          <span className="text-3xl">📝</span>
+          Blog
+        </h1>
         <Link
           href="/admin/posts/new"
           className="rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-700"
