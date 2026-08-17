@@ -43,6 +43,14 @@ const services = [
     desc: "Personal coaching with a Staff Azure Architect — landing zones, AKS, Terraform, identity, and solution design, tailored to your level.",
     cta: "Book a session →",
   },
+  {
+    href: "https://japnam.tech/receipt",
+    external: true,
+    icon: "🧾",
+    title: "Receipt Scanner",
+    desc: "Scans your Google Drive for receipts, OCRs them locally (no API key), and stores merchant/date/total you can search and edit via API + dashboard.",
+    cta: "Open app ↗",
+  },
 ];
 
 export default function ServicesPage() {
@@ -58,24 +66,45 @@ export default function ServicesPage() {
       </p>
 
       <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {services.map((s) => (
-          <Link
-            key={s.href}
-            href={s.href}
-            className="group flex flex-col rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl"
-          >
-            <span className="text-4xl">{s.icon}</span>
-            <h2 className="mt-4 text-xl font-semibold text-zinc-900">
-              {s.title}
-            </h2>
-            <p className="mt-2 flex-1 text-sm leading-relaxed text-zinc-600">
-              {s.desc}
-            </p>
-            <span className="mt-5 text-sm font-semibold text-blue-600 transition-colors group-hover:text-blue-700">
-              {s.cta}
-            </span>
-          </Link>
-        ))}
+        {services.map((s) =>
+          s.external ? (
+            <a
+              key={s.href}
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex flex-col rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl"
+            >
+              <span className="text-4xl">{s.icon}</span>
+              <h2 className="mt-4 text-xl font-semibold text-zinc-900">
+                {s.title}
+              </h2>
+              <p className="mt-2 flex-1 text-sm leading-relaxed text-zinc-600">
+                {s.desc}
+              </p>
+              <span className="mt-5 text-sm font-semibold text-blue-600 transition-colors group-hover:text-blue-700">
+                {s.cta}
+              </span>
+            </a>
+          ) : (
+            <Link
+              key={s.href}
+              href={s.href}
+              className="group flex flex-col rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl"
+            >
+              <span className="text-4xl">{s.icon}</span>
+              <h2 className="mt-4 text-xl font-semibold text-zinc-900">
+                {s.title}
+              </h2>
+              <p className="mt-2 flex-1 text-sm leading-relaxed text-zinc-600">
+                {s.desc}
+              </p>
+              <span className="mt-5 text-sm font-semibold text-blue-600 transition-colors group-hover:text-blue-700">
+                {s.cta}
+              </span>
+            </Link>
+          ),
+        )}
       </div>
     </section>
   );

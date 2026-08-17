@@ -50,6 +50,13 @@ const services = [
     desc: "Personal cloud/architecture coaching with a Staff Azure Architect.",
     icon: "🎓",
   },
+  {
+    href: "https://japnam.tech/receipt",
+    external: true,
+    label: "Receipt Scanner",
+    desc: "Scans Google Drive receipts, OCRs them, and stores structured data.",
+    icon: "🧾",
+  },
 ];
 
 export default function Navbar() {
@@ -127,27 +134,51 @@ export default function Navbar() {
 
             {servicesOpen && (
               <div className="absolute right-0 z-50 mt-2 w-72 overflow-hidden rounded-2xl border border-zinc-200 bg-white p-2 shadow-xl">
-                {services.map((s) => (
-                  <Link
-                    key={s.href}
-                    href={s.href}
-                    onClick={() => {
-                      setServicesOpen(false);
-                      setOpen(false);
-                    }}
-                    className="flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-zinc-900/5"
-                  >
-                    <span className="text-2xl leading-none">{s.icon}</span>
-                    <span>
-                      <span className="block text-sm font-semibold text-zinc-900">
-                        {s.label}
+                {services.map((s) =>
+                  s.external ? (
+                    <a
+                      key={s.href}
+                      href={s.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => {
+                        setServicesOpen(false);
+                        setOpen(false);
+                      }}
+                      className="flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-zinc-900/5"
+                    >
+                      <span className="text-2xl leading-none">{s.icon}</span>
+                      <span>
+                        <span className="block text-sm font-semibold text-zinc-900">
+                          {s.label}
+                        </span>
+                        <span className="mt-0.5 block text-xs text-zinc-500">
+                          {s.desc}
+                        </span>
                       </span>
-                      <span className="mt-0.5 block text-xs text-zinc-500">
-                        {s.desc}
+                    </a>
+                  ) : (
+                    <Link
+                      key={s.href}
+                      href={s.href}
+                      onClick={() => {
+                        setServicesOpen(false);
+                        setOpen(false);
+                      }}
+                      className="flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-zinc-900/5"
+                    >
+                      <span className="text-2xl leading-none">{s.icon}</span>
+                      <span>
+                        <span className="block text-sm font-semibold text-zinc-900">
+                          {s.label}
+                        </span>
+                        <span className="mt-0.5 block text-xs text-zinc-500">
+                          {s.desc}
+                        </span>
                       </span>
-                    </span>
-                  </Link>
-                ))}
+                    </Link>
+                  ),
+                )}
               </div>
             )}
           </li>
@@ -215,18 +246,33 @@ export default function Navbar() {
             <li className="px-3 pt-3 text-xs font-semibold uppercase tracking-wide text-zinc-400">
               Services
             </li>
-            {services.map((s) => (
-              <li key={s.href}>
-                <Link
-                  href={s.href}
-                  className="flex items-center gap-2 rounded-lg px-3 py-2.5 transition-colors hover:bg-zinc-900/5 hover:text-zinc-900"
-                  onClick={() => setOpen(false)}
-                >
-                  <span>{s.icon}</span>
-                  {s.label}
-                </Link>
-              </li>
-            ))}
+            {services.map((s) =>
+              s.external ? (
+                <li key={s.href}>
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 rounded-lg px-3 py-2.5 transition-colors hover:bg-zinc-900/5 hover:text-zinc-900"
+                    onClick={() => setOpen(false)}
+                  >
+                    <span>{s.icon}</span>
+                    {s.label}
+                  </a>
+                </li>
+              ) : (
+                <li key={s.href}>
+                  <Link
+                    href={s.href}
+                    className="flex items-center gap-2 rounded-lg px-3 py-2.5 transition-colors hover:bg-zinc-900/5 hover:text-zinc-900"
+                    onClick={() => setOpen(false)}
+                  >
+                    <span>{s.icon}</span>
+                    {s.label}
+                  </Link>
+                </li>
+              ),
+            )}
 
             <li className="pt-2">
               <Link
