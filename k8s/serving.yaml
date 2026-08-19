@@ -5,12 +5,12 @@
 #     cluster. The SQLite blog DB lives on a PersistentVolumeClaim so posts
 #     survive pod restarts/rescheduling.
 #   - Exposes it via a Service type LoadBalancer, which gives you a public
-#     EXTERNAL-IP. Point japnam.tech DNS (in Hostinger) at that IP.
+#     EXTERNAL-IP. Point japnam.tech DNS (in the DNS provider) at that IP.
 #
 # Apply order:
 #   1. kubectl apply -f serving.yaml        # creates everything
 #   2. kubectl get svc japnam-web -w         # wait for EXTERNAL-IP
-#   3. In Hostinger DNS:  A  @  -> <EXTERNAL-IP>,  CNAME www -> japnam.tech
+#   3. In the DNS provider:  A  @  -> <EXTERNAL-IP>,  CNAME www -> japnam.tech
 #
 # Secrets: create the Secret values before applying, e.g.
 #   kubectl create secret generic japnam-env \

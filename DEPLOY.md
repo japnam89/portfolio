@@ -1,4 +1,4 @@
-# Deploy to japnam.tech (Hostinger Node hosting)
+# Deploy to japnam.tech (Node hosting)
 
 This is a Next.js 16 App Router app (Node server, not static export). It runs
 with `npm run build` then `npm run start`.
@@ -26,7 +26,7 @@ git push -u origin main
 If you'd rather push from this VM, paste a GitHub **Personal Access Token**
 (classic, `repo` scope) and I'll run the push for you.
 
-## 2. Hostinger Git Deployment (recommended)
+## 2. Git Deployment (recommended)
 In hPanel → your `japnam.tech` Node hosting → **Git** (or Git Deployment /
 Auto Deploy):
 - Repository URL: `https://github.com/japnam89/portfolio.git`
@@ -37,7 +37,7 @@ Auto Deploy):
 - Then **Deploy / Restart**.
 
 ### CRITICAL: production install strips devDependencies
-Hostinger runs the install as `npm ci --omit=dev` (production only). Anything in
+The host runs the install as `npm ci --omit=dev` (production only). Anything in
 `devDependencies` is **NOT installed**, which caused two real build failures:
 
 1. **Tailwind v4 native binary missing** — `@tailwindcss/postcss` and the
@@ -46,7 +46,7 @@ Hostinger runs the install as `npm ci --omit=dev` (production only). Anything in
    `Cannot find module './tailwindcss-oxide.linux-x64-gnu.node'`.
    **Fix:** both are now in `dependencies` (regular deps survive `--omit=dev`).
 
-2. **Build-time crash on missing RustFS vars** — `src/lib/hostinger.ts` used to
+2. **Build-time crash on missing RustFS vars** — `src/lib/system-storage.ts` used to
    `throw` at module load if `RUSTFS_*` env vars were absent, crashing
    `next build` during "Collecting page data".
    **Fix:** credentials are now validated only at request time (inside
@@ -62,7 +62,7 @@ rm -rf node_modules .next && npm ci --omit=dev && npm run build
 
 ## 3. Manual deploy on the host (alternative)
 SSH into the Node hosting box (hPanel → Advanced → SSH Access; the host is the
-per-account one, e.g. `srv1865422…` (the VPS host), **not** the RustFS
+per-account one, e.g. `srv1865422…` (the server), **not** the RustFS
 Object Storage gateway `rustfs-dkgj.srv1865422.hstgr.cloud`):
 
 ```bash
@@ -87,7 +87,7 @@ RESEND_API_KEY=<resend-api-key>
 CONTACT_TO_EMAIL=info@japnam.com
 CONTACT_FROM_EMAIL=Portfolio <onboarding@resend.dev>
 
-# RustFS / Hostinger Object Storage (private photo bucket)
+# RustFS / Object Storage (private photo bucket)
 RUSTFS_ENDPOINT=https://rustfs-dkgj.srv1865422.hstgr.cloud
 RUSTFS_REGION=us-east-1
 RUSTFS_ACCESS_KEY=<rustfs-access-key>
@@ -96,7 +96,7 @@ RUSTFS_BUCKET=photos
 RUSTFS_URL_EXPIRES=3600
 ```
 
-On the **VPS / Docker** deployment, these come from the gitignored `.env`
+On the **Docker** deployment, these come from the gitignored `.env`
 file (see `docker-compose.yml`): `cp .env.example .env` then fill in the
 real values. `.env*` is git-ignored, so local secrets never get pushed.
 
@@ -108,8 +108,8 @@ to populate the gallery.
 - The gallery fetches `/api/photos`, which lists the `photos` bucket and mints
   presigned GET URLs server-side using the AWS SDK v3 `S3Client`
   (`forcePathStyle: true`).
-- Endpoint is `https://rustfs-dkgj.srv1865422.hstgr.cloud` (the Hostinger
-  Object Storage gateway; path-style, bucket at root).
+- Endpoint is `https://rustfs-dkgj.srv1865422.hstgr.cloud` (the Object Storage
+  gateway; path-style, bucket at root).
 - **You must supply `RUSTFS_ACCESS_KEY` + `RUSTFS_SECRET_KEY`** — the
   credentials for your RustFS bucket. Without them the route returns an empty
   list and the gallery shows a "curating" placeholder.

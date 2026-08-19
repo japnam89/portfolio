@@ -5,8 +5,8 @@
 #   - Registers itself with YOUR repo's GitHub Actions (via the token Secret).
 #   - Labels itself "aks" + "portfolio" so the deploy workflow (runs-on:
 #     [self-hosted, aks, portfolio]) is routed here automatically.
-#   - Runs the Next.js build then SFTP-deploys to Hostinger. Hostinger only
-#     serves the app + owns the japnam.tech DNS. AKS is just the build/CI host.
+#   - Runs the Next.js build then SFTP-deploys to the Node host. The Node host
+#     only serves the app + owns the japnam.tech DNS. AKS is just the build/CI host.
 #
 # Setup (one-time, on your machine with kubectl + kubeconfig pointed at AKS):
 #   1. Create a GitHub Personal Access Token (classic, `repo` + `admin:org`

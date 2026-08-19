@@ -1,7 +1,7 @@
-// Server-only helper for Hostinger Object Storage (RustFS, S3-compatible).
+// Server-only helper for object storage (RustFS / S3-compatible).
 // Lists photo objects in the `photos` bucket and mints fresh presigned GET
 // URLs. Uses the official AWS SDK v3 S3Client with path-style addressing
-// (RustFS serves buckets at the root of its gateway host).
+// (the bucket is served at the root of its gateway host).
 //
 // Verified working config (tested from this environment):
 // - endpoint: https://rustfs-dkgj.srv1865422.hstgr.cloud
@@ -64,7 +64,7 @@ export async function presignGet(key: string): Promise<string> {
   return getSignedUrl(
     client,
     new GetObjectCommand({ Bucket: bucket, Key: key }),
-    { expiresIn: expires },
+    { expiresIn: expires }
   );
 }
 

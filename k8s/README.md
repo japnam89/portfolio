@@ -4,15 +4,15 @@ Two things run in your Azure subscription:
 1. A **self-hosted GitHub Actions runner** (pod) — builds the app on push.
 2. The **Next.js app itself** (pod) — serves `japnam.tech` to the internet.
 
-Hostinger only **registers the domain** (`japnam.tech`) and serves DNS. You
+The registrar only **registers the domain** (`japnam.tech`) and serves DNS. You
 point the domain's A record at the AKS LoadBalancer IP.
 
 ---
 
-## Option A — Build on AKS runner, deploy to Hostinger (cheapest, no always-on node)
+## Option A — Build on AKS runner, deploy to the Node host (cheapest, no always-on node)
 - `runner-deployment.yaml` runs the Actions runner.
-- `.github/workflows/deploy.yml` builds + SFTP-deploys source to Hostinger's
-  Node hosting (Hostinger runs `npm ci && npm run build`).
+- `.github/workflows/deploy.yml` builds + SFTP-deploys source to the
+  Node host (it runs `npm ci && npm run build`).
 - Cost: GitHub Actions minutes only. No AKS node needed for serving.
 - See "Runner setup" below. Skip the serving manifests.
 
@@ -54,14 +54,14 @@ kubectl apply -f k8s/serving.yaml
 kubectl get svc japnam-web -w   # wait for EXTERNAL-IP
 ```
 
-### 4. DNS (Hostinger)
-In hPanel → `japnam.tech` → **DNS Zone Editor** (switch off parking nameservers
-to Hostinger-managed DNS first):
+### 4. DNS (registrar)
+In the registrar → `japnam.tech` → **DNS Zone Editor** (switch off parking nameservers
+to registrar-managed DNS first):
 - `A    @    → <EXTERNAL-IP from step 3>`
 - `CNAME  www  →  japnam.tech`
 - Wait for propagation (≤ 24h).
 - TLS: add `cert-manager` + Let's Encrypt (or put Azure Front Door / App Gateway
-  in front) so `https://japnam.tech` works. Hostinger's free SSL does NOT cover
+  in front) so `https://japnam.tech` works. The registrar's free SSL does NOT cover
   an AKS IP.
 
 ---
@@ -74,7 +74,7 @@ to Hostinger-managed DNS first):
    (or create a K8s Secret and reference it).
 3. `kubectl apply -f k8s/runner-deployment.yaml`.
 4. The pod registers as a runner labelled `aks`. Push to `main` and the workflow
-   runs there. From AKS, `srv1865422.hstgr.cloud` resolves to the real Hostinger
+   runs there. From AKS, `srv1865422.hstgr.cloud` resolves to the real server
    IP (unlike this dev VM), so SFTP deploy works.
 
 ## Notes

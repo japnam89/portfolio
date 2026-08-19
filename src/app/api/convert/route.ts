@@ -5,7 +5,7 @@ import { tmpdir } from "os";
 import { join } from "path";
 import { execFile } from "child_process";
 import { promisify } from "util";
-import { putObject, presignGet, deleteObject } from "@/lib/hostinger";
+import { putObject, presignGet, deleteObject } from "@/lib/system-storage";
 
 export const runtime = "nodejs";
 // Conversions can take a few seconds; give the route room to finish.

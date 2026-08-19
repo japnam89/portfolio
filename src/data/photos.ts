@@ -1,6 +1,6 @@
 // Photography captions. Keyed by the object's FILENAME (the part after
 // "photos/"). The actual image URLs are fetched at runtime from /api/photos
-// (presigned from your private Hostinger bucket). Edit the captions here.
+// (presigned from your private object-storage bucket). Edit the captions here.
 //
 // Any photo in the bucket without an entry here falls back to its filename
 // as the alt text, so the gallery still works even if you forget to add one.

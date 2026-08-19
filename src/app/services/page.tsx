@@ -19,7 +19,7 @@ const services = [
     href: "/convert",
     icon: "📄",
     title: "Doc to PDF",
-    desc: "Convert Word, PowerPoint, Excel, OpenDocument and plain text to PDF — free, processed on-server with LibreOffice, files never leave the VPS.",
+    desc: "Convert Word, PowerPoint, Excel, OpenDocument and plain text to PDF — free, processed on-server with LibreOffice, files never leave the server.",
     cta: "Convert a file →",
   },
   {

@@ -39,20 +39,20 @@ npx vercel --prod  # production
 Add `RESEND_API_KEY` and `CONTACT_TO_EMAIL` as Environment Variables in the
 Vercel project settings.
 
-## Deploy to Hostinger
+## Deploy to a Node host
 
-### Option A — Hostinger Node.js hosting / VPS (recommended; contact form works)
+### Option A — Node.js hosting (recommended; contact form works)
 
-1. In the Hostinger dashboard, create a **Node.js** app and point its root to this
+1. In the hosting dashboard, create a **Node.js** app and point its root to this
    project folder.
 2. Set the **start command** to: `npm run start`
 3. Set the **build command** to: `npm run build`
 4. Add Environment Variables (same names as `.env.example`):
    `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`
-5. Hostinger sets `PORT` and `HOST` for you — `npm run start` (which runs
+5. The host sets `PORT` and `HOST` for you — `npm run start` (which runs
    `next start`) picks them up automatically. Done.
 
-### Option B — Hostinger shared / "Website" hosting (static FTP upload)
+### Option B — shared / "Website" hosting (static FTP upload)
 
 Shared hosting has no Node runtime, so export a static site:
 

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { listPhotoKeys, presignGet } from "@/lib/hostinger";
+import { listPhotoKeys, presignGet } from "@/lib/system-storage";
 import { mergeCaption } from "@/lib/captions";
 import { metaFor } from "@/data/photos";
 
@@ -27,7 +27,7 @@ export async function GET() {
     process.env.RUSTFS_ACCESS_KEY && process.env.RUSTFS_SECRET_KEY,
   );
 
-  // Without credentials there's no point calling RustFS — return an empty
+  // Without credentials there's no point calling the storage — return an empty
   // gallery (200) instead of letting the SDK throw a 500.
   if (!configured) {
     return NextResponse.json({

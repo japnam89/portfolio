@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 // "/photography". Photos are fetched at runtime (presigned from your private
-// Hostinger bucket) by the PhotoGallery client component.
+// object-storage bucket) by the PhotoGallery client component.
 export default function Photography() {
   return (
     <section className="mx-auto max-w-5xl px-6 py-20">

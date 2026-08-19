@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { Resend } from "resend";
 
-// On static export (Hostinger shared hosting) this route can't run, so we mark
+// On static export (shared hosting) this route can't run, so we mark
 // it static and it is simply omitted from the build. Under `next start` it runs
 // normally. `force-static` is safe in both modes.
 export const dynamic = "force-static";

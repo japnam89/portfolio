@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { getPost, listPosts } from "@/lib/blog";
 import { renderMarkdown } from "@/lib/markdown";
-import { presignGet } from "@/lib/hostinger";
+import { presignGet } from "@/lib/system-storage";
 import PostAdminControls from "@/components/PostAdminControls";
 import ShareArticle from "@/components/ShareArticle";
 
@@ -42,7 +42,7 @@ export default async function PostPage({
 
   const html = renderMarkdown(post.content);
 
-  // Cover: if it's a RustFS key (no scheme), mint a fresh presigned URL at
+  // Cover: if it's a storage key (no scheme), mint a fresh presigned URL at
   // render time so it never goes stale. Full URLs pass through unchanged.
   let coverSrc: string | null = null;
   if (post.cover) {

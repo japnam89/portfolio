@@ -1,16 +1,15 @@
-# Portfolio (japnam.tech) deployment on the Hostinger VPS, behind the
-# existing Traefik proxy.
+# Portfolio (japnam.tech) deployment behind the existing Traefik proxy.
 #
-# IMPORTANT: the traefik stack on this VPS runs with `network_mode: host`,
+# IMPORTANT: the traefik stack on the server runs with `network_mode: host`,
 # so there is NO user-defined bridge network to join. Instead we run this
 # container in host network mode too; Traefik (also host) reaches it at
 # 127.0.0.1:3000. The traefik labels below let Traefik route japnam.tech
 # -> this service automatically.
 #
-# Usage (on the VPS, in the repo dir):
+# Usage (on the server, in the repo dir):
 #   cp .env.example .env   # then fill in real values (RUSTFS_*, passwords)
 #   docker compose up -d --build
-# DNS already points japnam.tech at this VPS, so Traefik starts serving it.
+# DNS already points japnam.tech at this server, so Traefik starts serving it.
 #
 # Secrets are NOT in this file — they come from the gitignored .env via
 # ${VAR} interpolation (Docker Compose auto-loads .env in this dir).

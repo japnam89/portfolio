@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { listPosts, type Post } from "@/lib/blog";
-import { presignGet } from "@/lib/hostinger";
+import { presignGet } from "@/lib/system-storage";
 
 export const metadata: Metadata = {
   title: "Blog — Japnam Singh",
@@ -29,7 +29,7 @@ export default async function Blog() {
     posts = [];
   }
 
-  // Resolve cover images (RustFS keys -> fresh presigned URLs) up front.
+  // Resolve cover images (storage keys -> fresh presigned URLs) up front.
   const covers = await Promise.all(
     posts.map(async (p) => {
       if (!p.cover) return "";

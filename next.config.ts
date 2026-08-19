@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
     "@aws-sdk/s3-request-presigner",
   ],
 
-  // Allow images served from Hostinger Object Storage (RustFS). The gallery
+  // Allow images served from the object-storage bucket (RustFS). The gallery
   // uses `unoptimized` so remotePatterns isn't strictly required, but it's
   // set correctly in case optimization is toggled on later.
   // Host from your share URL: rustfs-dkgj.srv1865422.hstgr.cloud
@@ -26,10 +26,10 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // --- Hostinger deployment ---
+  // --- Deployment (Node.js server) ---
   //
-  // DEFAULT (Node.js hosting / VPS): leave as-is. Hostinger runs `npm run
-  // build` then `npm run start`. Next.js binds to the PORT env var Hostinger
+  // DEFAULT (Node.js hosting): leave as-is. The host runs `npm run
+  // build` then `npm run start`. Next.js binds to the PORT env var the host
   // provides and listens on 0.0.0.0 by default. The contact API route works.
   //
   // SHARED / "Website" hosting (no Node.js): Next can't run a server there, so
