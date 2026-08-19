@@ -53,9 +53,8 @@ export default function ConvertPage() {
       </div>
       <p className="mt-4 text-lg text-zinc-600">
         Convert Word, PowerPoint, Excel, OpenDocument and plain text files to PDF
-        for free — processed on the server with LibreOffice, then parked in the
-        same object-storage bucket as the photos. Files stay on this VPS; nothing
-        is sent to a third party.
+        for free — files are processed on this server and never sent to a third
+        party.
       </p>
 
       <form
