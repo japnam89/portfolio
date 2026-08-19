@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
-# Deploy the portfolio (Next.js 16 Node server app) to Hostinger Node hosting
+# Deploy the portfolio (Next.js 16 Node server app) to the Node hosting box
 # via rsync-over-SSH, then run `npm ci && npm run build` on the remote.
 #
 # Usage (password, via sshpass):
-#   SSHPASS='<password>' ./scripts/deploy-hostinger.sh \
-#       --host hXXXXX.hosting.hostinger.com --port 22 --user uXXXX \
+#   SSHPASS='<password>' ./scripts/deploy.sh \
+#       --host ssh.example.com --port 22 --user uXXXX \
 #       --remote /home/uXXXX/domains/japnam.tech/public_html
 #
 # Usage (SSH key):
-#   ./scripts/deploy-hostinger.sh --host ... --port 22 --user ... \
+#   ./scripts/deploy.sh --host ... --port 22 --user ... \
 #       --remote /home/.../public_html --identity ~/.ssh/id_rsa
 #
 # Flags:
-#   --host      Hostinger SSH/SFTP hostname
+#   --host      Remote SSH/SFTP hostname
 #   --port      SSH port (default 22)
 #   --user      SSH username
 #   --remote    Remote directory the Node app lives in (document root)
@@ -66,6 +66,6 @@ echo "==> Running npm ci && npm run build on the remote ..."
 "${SSH_CMD[@]}" "$USER@$HOST" "cd '$REMOTE' && npm ci --omit=dev 2>&1 | tail -5 && npm run build 2>&1 | tail -25"
 
 echo "==> Upload + build complete."
-echo "    Next: in hPanel set the Node app start command to 'npm run start'"
-echo "    and ensure NODE_ENV=production, PORT is the one Hostinger provides."
+echo "    Next: in the hosting dashboard set the Node app start command to 'npm run start'"
+echo "    and ensure NODE_ENV=production, PORT is the one the host provides."
 echo "    Then visit https://japnam.tech/"

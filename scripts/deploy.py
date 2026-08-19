@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """
-Deploy the portfolio (Next.js 16 Node server app) to Hostinger Node hosting
+Deploy the portfolio (Next.js 16 Node server app) to the Node hosting box
 via SFTP, then run `npm ci && npm run build` over SSH.
 
 Supports BOTH password auth and SSH-key auth (paramiko).
 
 Usage (password):
-    python scripts/deploy-hostinger.py \
-        --host hXXXX.hosting.hostinger.com --port 22 --user uXXXX \
+    python scripts/deploy.py \
+        --host ssh.example.com --port 22 --user uXXXX \
         --remote /home/uXXXX/domains/japnam.tech/public_html \
         --password '****'
 
 Usage (key):
-    python scripts/deploy-hostinger.py --host ... --user ... --remote ... \
+    python scripts/deploy.py --host ... --user ... --remote ... \
         --identity ~/.ssh/id_rsa
 
 Flags:
-    --host      Hostinger SSH/SFTP hostname (required)
+    --host      Remote SSH/SFTP hostname (required)
     --port      SSH port (default 22)
     --user      SSH username (required)
     --remote    Remote document root the Node app lives in (required)
@@ -25,7 +25,7 @@ Flags:
     --no-build  Upload only, skip `npm ci && npm run build` on the remote
     --built     Source was ALREADY built on the CI runner: include the local
                 .next/ output in the upload and skip the remote build entirely
-                (Hostinger just serves it). Use in CI: build on the runner,
+                (the host just serves it). Use in CI: build on the runner,
                 then ship the ready artifact.
     --dry-run   List files that would transfer, make no changes
 """
@@ -45,7 +45,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # host. When --built is set, .next/ IS included (prebuilt artifact).
 EXCLUDE_DIRS = {".git", "node_modules", ".next", "out", "build", ".venv-deploy", "data"}
 EXCLUDE_FILES = {
-    ".env", ".env.local", ".env.production", ".env.example",  # secrets go in hPanel, not in upload
+    ".env", ".env.local", ".env.production", ".env.example",  # secrets go in the dashboard, not in upload
     ".demoenv", ".demoenv.example",  # also holds a presigned token
     "package-lock.json.bak",
 }
@@ -154,7 +154,7 @@ def remote_extract_and_build(client, remote_root, tar_remote, no_build, built=Fa
     cmd_parts.append(f"&& tar -xzf '{tar_remote}'")
     cmd_parts.append(f"&& rm -f '{tar_remote}'")
     if built:
-        # Prebuilt artifact shipped from CI: install runtime deps only (Hostinger
+        # Prebuilt artifact shipped from CI: install runtime deps only (the host
         # needs node_modules to actually RUN next start) and do NOT rebuild.
         cmd_parts.append("&& npm ci --omit=dev")
     elif not no_build:
@@ -210,8 +210,8 @@ def main():
         os.unlink(tar_name)
 
     print("==> Deploy complete.")
-    print("    Next: in hPanel set the Node app Start command to 'npm run start'")
-    print("    Ensure NODE_ENV=production and PORT is the one Hostinger provides,")
+    print("    Next: in the hosting dashboard set the Node app Start command to 'npm run start'")
+    print("    Ensure NODE_ENV=production and PORT is the one the host provides,")
     print("    then visit https://japnam.tech/")
 
 
