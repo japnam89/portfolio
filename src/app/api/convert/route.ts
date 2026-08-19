@@ -5,7 +5,7 @@ import { tmpdir } from "os";
 import { join } from "path";
 import { execFile } from "child_process";
 import { promisify } from "util";
-import { putObject, presignGet } from "@/lib/hostinger";
+import { putObject, presignGet, deleteObject } from "@/lib/hostinger";
 
 export const runtime = "nodejs";
 // Conversions can take a few seconds; give the route room to finish.
@@ -96,21 +96,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Park both the original and the PDF in the bucket under a convert/ prefix.
+    // Park the PDF in the bucket under a convert/ prefix. The original upload
+    // is dropped from the bucket right after (best-effort) so only the PDF
+    // lingers — we don't need to keep the source doc around.
     const docKey = `convert/${id}/${baseName}${ext}`;
     const pdfKey = `convert/${id}/${baseName}.pdf`;
-    await putObject(docKey, buf, mime);
     await putObject(pdfKey, pdf, "application/pdf");
 
-    const [docUrl, pdfUrl] = await Promise.all([
-      presignGet(docKey),
-      presignGet(pdfKey),
-    ]);
+    // Best-effort cleanup of the original: if it fails we still return the PDF.
+    try {
+      await deleteObject(docKey);
+    } catch (delErr) {
+      console.error("[/api/convert] original delete failed (non-fatal):", delErr);
+    }
+
+    const pdfUrl = await presignGet(pdfKey);
 
     return NextResponse.json({
       ok: true,
       pdfUrl,
-      docUrl,
       pdfKey,
       filename: `${baseName}.pdf`,
     });

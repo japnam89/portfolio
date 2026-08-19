@@ -4,7 +4,6 @@ import { useState, useRef } from "react";
 
 type Result = {
   pdfUrl: string;
-  docUrl: string;
   filename: string;
 };
 
@@ -38,7 +37,7 @@ export default function ConvertPage() {
       if (!res.ok || !data.ok) {
         throw new Error(data.error || "Conversion failed.");
       }
-      setResult({ pdfUrl: data.pdfUrl, docUrl: data.docUrl, filename: data.filename });
+      setResult({ pdfUrl: data.pdfUrl, filename: data.filename });
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -117,14 +116,6 @@ export default function ConvertPage() {
                 className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-emerald-700 ring-1 ring-emerald-300 hover:bg-emerald-100"
               >
                 Open in new tab ↗
-              </a>
-              <a
-                href={result.docUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm font-medium text-zinc-600 underline hover:text-zinc-900"
-              >
-                Original upload ↗
               </a>
             </div>
           </div>

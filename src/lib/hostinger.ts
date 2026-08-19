@@ -13,6 +13,7 @@ import {
   ListObjectsV2Command,
   GetObjectCommand,
   PutObjectCommand,
+  DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -83,6 +84,16 @@ export async function putObject(
       ContentType: contentType,
     }),
   );
+}
+
+// Remove an object from the bucket. Returns true if it was deleted (or didn't
+// exist). Best-effort: callers that don't need to block on it can swallow
+// errors. Used by /convert to drop the original upload after a PDF is made.
+export async function deleteObject(key: string): Promise<boolean> {
+  await client.send(
+    new DeleteObjectCommand({ Bucket: bucket, Key: key }),
+  );
+  return true;
 }
 
 // Mint a presigned PUT URL so a browser can upload a file directly to the
