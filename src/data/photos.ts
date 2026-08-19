@@ -15,32 +15,36 @@ export type PhotoMeta = {
 
 export const photoMeta: Record<string, PhotoMeta> = {
   "DSC07343.JPG": {
-    alt: "A frame from the photography collection",
+    alt: "Coastal Light — a frame from the photography collection",
     title: "Coastal Light",
     location: "TBD",
     date: "TBD",
-    description: "A frame from the photography collection.",
+    description:
+      "Soft light along the coastline at the edge of the day — one of the quieter frames from the collection.",
   },
   "DSC07344.JPG": {
-    alt: "A frame from the photography collection",
+    alt: "City Lines — a frame from the photography collection",
     title: "City Lines",
     location: "TBD",
     date: "TBD",
-    description: "A frame from the photography collection.",
+    description:
+      "Leading lines and geometry of the city, captured where architecture meets the sky.",
   },
   "DSC07659.JPG": {
-    alt: "A frame from the photography collection",
+    alt: "Quiet Street — a frame from the photography collection",
     title: "Quiet Street",
     location: "TBD",
     date: "TBD",
-    description: "A frame from the photography collection.",
+    description:
+      "An empty street between buildings — the calm before the everyday bustle returns.",
   },
   "DSC08068.JPG": {
-    alt: "A frame from the photography collection",
+    alt: "Evening Calm — a frame from the photography collection",
     title: "Evening Calm",
     location: "TBD",
     date: "TBD",
-    description: "A frame from the photography collection.",
+    description:
+      "The day winding down — a still, unhurried moment as the light fades.",
   },
 };
 

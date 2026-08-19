@@ -4,7 +4,13 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { metaFor } from "@/data/photos";
 
-type Photo = { key: string; src: string };
+type Photo = { key: string; src: string; caption?: {
+  alt: string;
+  title?: string;
+  location?: string;
+  date?: string;
+  description?: string;
+} };
 
 // Client component: fetches presigned URLs from /api/photos, renders a
 // responsive grid with always-visible captions, and a click-to-zoom lightbox
@@ -75,7 +81,7 @@ export default function PhotoGallery() {
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {photos.map((photo) => {
-          const meta = metaFor(photo.key);
+          const meta = photo.caption ?? metaFor(photo.key);
           const sub = [meta.location, meta.date].filter(Boolean).join(" · ");
           return (
             <button
@@ -116,11 +122,13 @@ export default function PhotoGallery() {
         })}
       </div>
 
-      {active && (
+      {active && (() => {
+        const meta = active.caption ?? metaFor(active.key);
+        return (
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={metaFor(active.key).alt}
+          aria-label={meta.alt}
           onClick={() => setActive(null)}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
         >
@@ -140,33 +148,34 @@ export default function PhotoGallery() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={active.src}
-              alt={metaFor(active.key).alt}
+              alt={meta.alt}
               className="max-h-[72vh] max-w-[92vw] rounded-lg object-contain"
             />
             <figcaption className="mt-4 w-full max-w-2xl text-center">
-              {metaFor(active.key).title && (
+              {meta.title && (
                 <p className="text-base font-semibold text-white">
-                  {metaFor(active.key).title}
+                  {meta.title}
                 </p>
               )}
-              {[metaFor(active.key).location, metaFor(active.key).date]
+              {[meta.location, meta.date]
                 .filter(Boolean)
                 .join(" · ") && (
                 <p className="mt-0.5 text-sm text-zinc-300">
-                  {[metaFor(active.key).location, metaFor(active.key).date]
+                  {[meta.location, meta.date]
                     .filter(Boolean)
                     .join(" · ")}
                 </p>
               )}
-              {metaFor(active.key).description && (
+              {meta.description && (
                 <p className="mx-auto mt-2 max-w-prose text-sm leading-relaxed text-zinc-400">
-                  {metaFor(active.key).description}
+                  {meta.description}
                 </p>
               )}
             </figcaption>
           </figure>
         </div>
-      )}
+        );
+      })()}
     </>
   );
 }

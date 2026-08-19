@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { listPhotoKeys, presignGet } from "@/lib/hostinger";
+import { mergeCaption } from "@/lib/captions";
+import { metaFor } from "@/data/photos";
 
 // Server-side only. Always runs fresh so presigned URLs don't go stale in
 // the static build.
@@ -12,7 +14,11 @@ export async function GET() {
   if (demo) {
     const photos = demo
       .split(",")
-      .map((src, i) => ({ key: `photos/DEMO${i}.JPG`, src: src.trim() }))
+      .map((src, i) => ({
+        key: `photos/DEMO${i}.JPG`,
+        src: src.trim(),
+        caption: mergeCaption(`photos/DEMO${i}.JPG`, metaFor(`photos/DEMO${i}.JPG`)),
+      }))
       .filter((p) => p.src);
     return NextResponse.json({ photos, source: "demo" });
   }
@@ -35,7 +41,11 @@ export async function GET() {
   try {
     const keys = await listPhotoKeys();
     const photos = await Promise.all(
-      keys.map(async (key) => ({ key, src: await presignGet(key) })),
+      keys.map(async (key) => ({
+        key,
+        src: await presignGet(key),
+        caption: mergeCaption(key, metaFor(key)),
+      })),
     );
     return NextResponse.json({ photos, source: "rustfs", configured });
   } catch (err) {
