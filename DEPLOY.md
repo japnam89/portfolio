@@ -84,7 +84,7 @@ from `.env.example`. The critical ones:
 # Blog admin + notifications (optional)
 POST_ADMIN_PASSWORD=<set-a-strong-password>
 RESEND_API_KEY=<resend-api-key>
-CONTACT_TO_EMAIL=<your-email>
+CONTACT_TO_EMAIL=info@japnam.com
 CONTACT_FROM_EMAIL=Portfolio <onboarding@resend.dev>
 
 # RustFS / Hostinger Object Storage (private photo bucket)
