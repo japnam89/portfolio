@@ -1,8 +1,8 @@
-name: Deploy to Hostinger (via AKS runner)
+name: Deploy (via AKS runner)
 
 # Builds the Next.js app on a self-hosted GitHub Actions runner that runs as a
 # pod inside YOUR Azure AKS cluster, then SFTP-deploys the prebuilt artifact to
-# your Hostinger Node hosting. Hostinger only serves the app + owns the DNS for
+# the Node hosting box. The host only serves the app + owns the DNS for
 # japnam.tech. The AKS cluster name below must match your runner's labels.
 
 on:
@@ -30,28 +30,28 @@ jobs:
       - name: Install dependencies
         run: npm ci --omit=dev
 
-      - name: Build (prebuilt artifact for Hostinger)
+      - name: Build (prebuilt artifact for the host)
         run: npm run build
-        # Hostinger still needs the env vars at RUNTIME (set in hPanel), but the
-        # build itself tolerates their absence thanks to the deferred check in
-        # src/lib/hostinger.ts.
+        # The host still needs the env vars at RUNTIME (set in the hosting
+        # dashboard), but the build itself tolerates their absence thanks to
+        # the deferred check in src/lib/system-storage.ts.
 
-      - name: Deploy to Hostinger over SFTP
+      - name: Deploy over SFTP
         env:
-          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}     # e.g. srv1865422.hstgr.cloud
-          HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}     # e.g. u123456 (NOT root)
-          HOSTINGER_PASS: ${{ secrets.HOSTINGER_PASS }}
-          HOSTINGER_REMOTE: ${{ secrets.HOSTINGER_REMOTE }} # e.g. /home/u123456/domains/japnam.tech/public_html
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}       # e.g. srv1865422.hstgr.cloud
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}       # e.g. u123456 (NOT root)
+          DEPLOY_PASS: ${{ secrets.DEPLOY_PASS }}
+          DEPLOY_REMOTE: ${{ secrets.DEPLOY_REMOTE }}   # e.g. /home/u123456/domains/japnam.tech/public_html
         run: |
           python3 -m pip install --quiet paramiko
-          python3 scripts/deploy-hostinger.py \
-            --host "$HOSTINGER_HOST" \
-            --user "$HOSTINGER_USER" \
-            --remote "$HOSTINGER_REMOTE" \
-            --password "$HOSTINGER_PASS"
+          python3 scripts/deploy.py \
+            --host "$DEPLOY_HOST" \
+            --user "$DEPLOY_USER" \
+            --remote "$DEPLOY_REMOTE" \
+            --password "$DEPLOY_PASS"
           # NOTE: we deliberately do NOT pass --built here. `better-sqlite3` is a
           # native addon whose prebuilt binary is ABI-locked to the build Node
           # version. Building on the AKS runner and shipping .next could ship a
-          # binary that mismatches Hostinger's Node (ERR_DLOPEN_FAILED). Instead
-          # the runner uploads SOURCE and Hostinger runs `npm ci && npm run
+          # binary that mismatches the host's Node (ERR_DLOPEN_FAILED). Instead
+          # the runner uploads SOURCE and the host runs `npm ci && npm run
           # build` with its own Node, compiling better-sqlite3 correctly.
