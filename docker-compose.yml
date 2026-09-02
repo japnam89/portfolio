@@ -6,9 +6,13 @@
 # 127.0.0.1:3000. The traefik labels below let Traefik route japnam.tech
 # -> this service automatically.
 #
+# The Raghi-list feature lives in the Next.js app as a `/raghi` page with an
+# "Download Raghi list of this month" button. Clicking it POSTs to /api/raghi
+# which triggers the n8n webhook at
+#   https://n8n-1lje.srv1948665.hstgr.cloud/webhook-test/sgpc-kirtan-duty
+#
 # Usage (on the server, in the repo dir):
-#   cp .env.example .env   # then fill in real values (RUSTFS_*, passwords)
-#   docker compose up -d --build
+#   docker compose pull && docker compose up -d
 # DNS already points japnam.tech at this server, so Traefik starts serving it.
 #
 # Secrets are NOT in this file — they come from the gitignored .env via
@@ -17,10 +21,7 @@
 
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: japnam-web:latest
+    image: ghcr.io/japnam89/portfolio:latest
     restart: unless-stopped
     network_mode: host
     volumes:
@@ -58,7 +59,5 @@ services:
       - 'traefik.http.routers.japnam-www.tls.certresolver=letsencrypt'
       - 'traefik.http.routers.japnam-www.middlewares=japnam-www'
 
-# Named volume for persistent blog DB (mounted at /data inside the container).
-# Declared at the top level so Docker creates/keeps it across `up --build`.
 volumes:
   japnam-data:
