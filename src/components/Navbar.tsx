@@ -50,6 +50,12 @@ const services = [
     desc: "Personal cloud/architecture coaching with a Staff Azure Architect.",
     icon: "🎓",
   },
+  {
+    href: "/raghi",
+    label: "Raghi List",
+    desc: "Monthly kirtan duty list from Darbar Sahib Amritsar.",
+    icon: "📋",
+  },
 ];
 
 export default function Navbar() {
