@@ -1,0 +1,74 @@
+name: Build & Push Docker image to GHCR
+
+# Builds the portfolio Docker image on every push to main and pushes it to
+# GitHub Container Registry (GHCR) as:
+#   ghcr.io/japnam89/portfolio:latest
+#   ghcr.io/japnam89/portfolio:sha-<short>
+#
+# One-time setup:
+#   - Repo Settings > Actions > General:
+#       * Allow actions that create and approve pull requests: ON
+#       * Workflow permissions: Read and write permissions
+#   - No secrets required — GITHUB_TOKEN is auto-provided and has
+#     packages:write via the top-level permissions block.
+#
+# After the image is pushed, deploy on the VPS:
+#   docker compose pull && docker compose up -d
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: docker-build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE: ghcr.io/japnam89/portfolio
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=,format=short
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
