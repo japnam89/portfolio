@@ -1,7 +1,5 @@
 // POST /api/raghi
 // Triggers the n8n workflow that generates the monthly Raghi list.
-// The workflow must be "Active" (on the n8n canvas) so its production
-// webhook is always listening.
 //
 // IMPORTANT — two things needed on the n8n side for this to work:
 //   1. The sgpc-kirtan-duty workflow must be toggled to "Active" on the
@@ -12,9 +10,14 @@
 //      Without those labels, /webhook/* hits the portfolio app and returns
 //      a PDF; only /webhook-test/* reaches n8n.
 //
-// If Traefik labels aren't set up yet, use the test webhook URL instead:
-//   N8N_WEBHOOK_URL=https://n8n-1lje.srv1948665.hstgr.cloud/webhook-test/sgpc-kirtan-duty
-// (test-mode webhooks need "Execute workflow" clicked on the canvas first).
+// Currently the default URL is the TEST webhook because the VPS n8n container
+// doesn't have Traefik labels. For always-on production mode:
+//   a) Add Traefik labels to the n8n container on the VPS (see deploy docs)
+//   b) Change the URL below to /webhook/sgpc-kirtan-duty (no -test)
+//   c) Toggle the workflow to "Active" on the n8n canvas
+//
+// Test-mode webhooks need "Execute workflow" clicked on the canvas first
+// (one-shot — works for one call after clicking).
 //
 // Usage (client):
 //   fetch('/api/raghi', { method: 'POST' })
@@ -24,13 +27,12 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-// Production webhook URL — always on once workflow is Active AND Traefik routes correctly.
-// Currently the VPS n8n container has no Traefik labels, so /webhook/* falls through to
-// the portfolio app (/convert → PDF). Set N8N_WEBHOOK_URL env var to the test URL as a
-// fallback until Traefik labels are added on the VPS.
+// Default: test webhook (reaches n8n through current Traefik setup).
+// Change to /webhook/sgpc-kirtan-duty (production, always-on) once
+// Traefik labels are added to the n8n container on the VPS.
 const N8N_WEBHOOK_URL =
   process.env.N8N_WEBHOOK_URL ??
-  "https://n8n-1lje.srv1948665.hstgr.cloud/webhook/sgpc-kirtan-duty";
+  "https://n8n-1lje.srv1948665.hstgr.cloud/webhook-test/sgpc-kirtan-duty";
 
 export async function POST() {
   // Fire-and-forget: trigger the n8n workflow, don't wait for its result.
@@ -70,6 +72,6 @@ export async function GET() {
     message: "POST to trigger the monthly Raghi list workflow.",
     webhook_url: N8N_WEBHOOK_URL,
     note:
-      "For always-on: make the n8n workflow Active on the canvas AND add Traefik labels to the n8n container on the VPS.",
+      "For always-on: (1) toggle workflow Active on n8n canvas, (2) add Traefik labels to n8n container on VPS, (3) switch URL to /webhook/sgpc-kirtan-duty.",
   });
 }
