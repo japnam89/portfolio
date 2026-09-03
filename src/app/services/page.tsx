@@ -43,6 +43,13 @@ const services = [
     desc: "Personal coaching with a Staff Azure Architect — landing zones, AKS, Terraform, identity, and solution design, tailored to your level.",
     cta: "Book a session →",
   },
+  {
+    href: "/raghi",
+    icon: "📋",
+    title: "Raghi List",
+    desc: "Download the monthly kirtan duty list from Darbar Sahib Amritsar — powered by an n8n workflow that generates and delivers it.",
+    cta: "Get the list →",
+  },
 ];
 
 export default function ServicesPage() {
