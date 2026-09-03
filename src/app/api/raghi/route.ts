@@ -27,12 +27,15 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-// Default: test webhook (reaches n8n through current Traefik setup).
-// Change to /webhook/sgpc-kirtan-duty (production, always-on) once
-// Traefik labels are added to the n8n container on the VPS.
+// Production webhook URL — always on when workflow is Active AND Traefik routes correctly.
+// The n8n container on the VPS needs Traefik labels (see n8n-traefik-setup.md) so that
+// n8n-1lje.srv1948665.hstgr.cloud/webhook/* reaches n8n (port 5678) instead of falling
+// through to the portfolio app's /convert endpoint (which returns a PDF).
+// Without those labels, /webhook/* returns a PDF; /webhook-test/* reaches n8n but is
+// one-shot (needs "Execute workflow" clicked on the canvas first).
 const N8N_WEBHOOK_URL =
   process.env.N8N_WEBHOOK_URL ??
-  "https://n8n-1lje.srv1948665.hstgr.cloud/webhook-test/sgpc-kirtan-duty";
+  "https://n8n-1lje.srv1948665.hstgr.cloud/webhook/sgpc-kirtan-duty";
 
 export async function POST() {
   // Fire-and-forget: trigger the n8n workflow, don't wait for its result.
