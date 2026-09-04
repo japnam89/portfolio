@@ -137,7 +137,7 @@ If AI-102 gave you a foundation, AI-103 builds on it. It does not throw it away.
 
 The cleanest way to think about AI-103 is this:
 
-> **AI-102** tested whether you could **build an AI solution on Azure**.  
+> **AI-102** tested whether you could **build an AI solution on Azure**.
 > **AI-103** tests whether you can **ship and operate an AI application that a real user can trust**.
 
 That shift — from "can you wire it up" to "can you ship something safe and useful" — is the through-line of the whole 2026/2027 certification reset. It shows up in AI-103, in AI-901, and in the new agent track. Once you see it, the exam stops feeling like a collection of facts and starts feeling like a coherent bet about where the job went.
@@ -406,30 +406,18 @@ The world changed around it. It did not need to change itself.
   },
 ];
 
-// Update only the three slugs above. Leave everything else untouched.
+// Update only the three slugs above. Everything else left untouched.
 const up = db.prepare(
-  `UPDATE posts SET title = ?, content = ?, excerpt = ?
-   WHERE slug = ?`,
+  `UPDATE posts SET title = ?, content = ? WHERE slug = ?`,
 );
 let count = 0;
 for (const post of updates) {
-  // Rebuild a plain-text excerpt from the markdown (first ~160 chars, strip markup).
-  const excerpt = post.content
-    .replace(/<[^>]*>/g, "")
-    .replace(/#{1,6}\s*/g, "")
-    .replace(/\*{1,2}([^*]+)\*{1,2}/g, "$1")
-    .replace(/`{1,3}[^`]*`{1,3}/g, "")
-    .replace(/\|.*?\|/g, "")
-    .replace(/[-*+]\s+/g, "")
-    .replace(/\n/g, " ")
-    .trim()
-    .slice(0, 160);
-  const info = up.run(post.content, post.title, excerpt, post.slug);
+  const info = up.run(post.title, post.content, post.slug);
   if (info.changes > 0) {
-    console.log("✓ updated:", post.slug.slice(0, 40));
+    console.log("✓ updated:", post.slug.slice(0, 50));
     count++;
   } else {
-    console.log("✗ not found:", post.slug.slice(0, 40));
+    console.log("✗ not found:", post.slug.slice(0, 50));
   }
 }
 
