@@ -1,80 +1,78 @@
 // POST /api/raghi
-// Triggers the n8n workflow that generates the monthly Raghi list.
+// Fetches the monthly Raghi / kirtan duty list PDF from
+// https://hs.sgpc.net/kirtan_duty_english_pdf.php and streams it
+// back to the client as a download. No n8n dependency.
 //
-// IMPORTANT — two things needed on the n8n side for this to work:
-//   1. The sgpc-kirtan-duty workflow must be toggled to "Active" on the
-//      n8n canvas (top-right corner, switch from "Execute" to "Active").
-//   2. The n8n container (on the VPS) needs Traefik labels so that
-//      n8n-1lje.srv1948665.hstgr.cloud/webhook/* routes to n8n (port 5678)
-//      instead of falling through to the portfolio app's /convert endpoint.
-//      Without those labels, /webhook/* hits the portfolio app and returns
-//      a PDF; only /webhook-test/* reaches n8n.
-//
-// Currently the default URL is the TEST webhook because the VPS n8n container
-// doesn't have Traefik labels. For always-on production mode:
-//   a) Add Traefik labels to the n8n container on the VPS (see deploy docs)
-//   b) Change the URL below to /webhook/sgpc-kirtan-duty (no -test)
-//   c) Toggle the workflow to "Active" on the n8n canvas
-//
-// Test-mode webhooks need "Execute workflow" clicked on the canvas first
-// (one-shot — works for one call after clicking).
+// On the frontend this is called from /raghi — the button says
+// "Download raagi list of this month" and triggers this endpoint.
 //
 // Usage (client):
 //   fetch('/api/raghi', { method: 'POST' })
-//     → { ok: true, message: 'Raghi list request queued' }
+//     → binary PDF, Content-Type: application/pdf, Content-Disposition: attachment
 
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-// Production webhook URL — always on when workflow is Active AND Traefik routes correctly.
-// The n8n container on the VPS needs Traefik labels (see n8n-traefik-setup.md) so that
-// n8n-1lje.srv1948665.hstgr.cloud/webhook/* reaches n8n (port 5678) instead of falling
-// through to the portfolio app's /convert endpoint (which returns a PDF).
-// Without those labels, /webhook/* returns a PDF; /webhook-test/* reaches n8n but is
-// one-shot (needs "Execute workflow" clicked on the canvas first).
-const N8N_WEBHOOK_URL =
-  process.env.N8N_WEBHOOK_URL ??
-  "https://n8n-1lje.srv1948665.hstgr.cloud/webhook/sgpc-kirtan-duty";
+const SGPC_KIRTAN_DUTY_PDF =
+  process.env.SGPC_KIRTAN_DUTY_PDF_URL ??
+  "https://hs.sgpc.net/kirtan_duty_english_pdf.php";
 
 export async function POST() {
-  // Fire-and-forget: trigger the n8n workflow, don't wait for its result.
-  // If the webhook isn't reachable/registered, log it but still return 200
-  // to the client so the button doesn't break.
+  let upstream: Response;
+
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15_000);
+    const timeout = setTimeout(() => controller.abort(), 30_000);
 
-    const res = await fetch(N8N_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Accept": "application/json", "Content-Type": "application/json" },
-      body: JSON.stringify({ source: "japnam.tech/raghi" }),
+    upstream = await fetch(SGPC_KIRTAN_DUTY_PDF, {
+      method: "GET",
       signal: controller.signal,
     });
-    clearTimeout(timeout);
 
-    if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      console.warn(`[raghi] n8n webhook returned ${res.status}: ${text.slice(0, 200)}`);
-    } else {
-      console.log(`[raghi] n8n webhook triggered OK (${res.status})`);
-    }
+    clearTimeout(timeout);
   } catch (err) {
-    console.error("[raghi] failed to reach n8n webhook:", err);
+    console.error("[raghi] failed to fetch SGPC PDF:", err);
+    return NextResponse.json(
+      {
+        ok: false,
+        message:
+          "Failed to reach SGPC — the kirtan duty list may not be published yet this month. Try again later.",
+      },
+      { status: 502 },
+    );
   }
 
-  return NextResponse.json(
-    { ok: true, message: "Raghi list request queued" },
-    { status: 200 },
-  );
+  if (!upstream.ok) {
+    const body = await upstream.text().catch(() => "");
+    console.error(
+      `[raghi] SGPC returned ${upstream.status}: ${body.slice(0, 500)}`,
+    );
+    return NextResponse.json(
+      {
+        ok: false,
+        message: `SGPC returned HTTP ${upstream.status}. The list may not be available yet this month.`,
+      },
+      { status: 502 },
+    );
+  }
+
+  // Stream the PDF straight through to the client.
+  const headers = new Headers(upstream.headers);
+  headers.set("Content-Disposition", 'attachment; filename="kirtan_duty_list.pdf"');
+  headers.set("Cache-Control", "no-cache, no-store, must-revalidate");
+
+  return new NextResponse(upstream.body, {
+    status: upstream.status,
+    headers,
+  });
 }
 
 // GET gives a friendly note when someone visits /api/raghi directly.
 export async function GET() {
   return NextResponse.json({
-    message: "POST to trigger the monthly Raghi list workflow.",
-    webhook_url: N8N_WEBHOOK_URL,
-    note:
-      "For always-on: (1) toggle workflow Active on n8n canvas, (2) add Traefik labels to n8n container on VPS, (3) switch URL to /webhook/sgpc-kirtan-duty.",
+    message: "POST to download the monthly Raghi / kirtan duty list PDF.",
+    source: SGPC_KIRTAN_DUTY_PDF,
+    note: "The list is fetched live from hs.sgpc.net each time you click Download.",
   });
 }

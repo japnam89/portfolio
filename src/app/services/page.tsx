@@ -47,7 +47,7 @@ const services = [
     href: "/raghi",
     icon: "📋",
     title: "Raghi List",
-    desc: "Download the monthly kirtan duty list from Darbar Sahib Amritsar — powered by an n8n workflow that generates and delivers it.",
+    desc: "Download the monthly kirtan duty list from Darbar Sahib Amritsar — fetched live from SGPC each time you click.",
     cta: "Get the list →",
   },
 ];

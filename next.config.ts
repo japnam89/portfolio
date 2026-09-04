@@ -19,10 +19,14 @@ const nextConfig: NextConfig = {
   // uses `unoptimized` so remotePatterns isn't strictly required, but it's
   // set correctly in case optimization is toggled on later.
   // Host from your share URL: rustfs-dkgj.srv1865422.hstgr.cloud
+  // Parveen Singh blog reference images (Azure roadmap): parveensingh.com
+  // Unsplash CDN for free stock photos used as post covers: images.unsplash.com
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**.srv1865422.hstgr.cloud" },
       { protocol: "https", hostname: "images.credly.com" },
+      { protocol: "https", hostname: "parveensingh.com" },
+      { protocol: "https", hostname: "images.unsplash.com" },
     ],
   },
 

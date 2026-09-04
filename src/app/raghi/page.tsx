@@ -4,7 +4,7 @@ import RaghiForm from "./RaghiForm";
 export const metadata: Metadata = {
   title: "Raghi List — Japnam Singh",
   description:
-    "Download the monthly Raghi list — triggers an n8n workflow that generates and sends the latest list.",
+    "Download the monthly Raghi list — the kirtan duty roster from Darbar Sahib Amritsar.",
 };
 
 export default function RaghiPage() {
@@ -16,9 +16,8 @@ export default function RaghiPage() {
         <h1 className="text-4xl font-bold tracking-tight">Raghi List</h1>
       </div>
       <p className="mt-4 text-lg text-zinc-600">
-        Download the monthly kirtan duty list from Darbar Sahib Amritsar. Clicking
-        the button below triggers an n8n workflow that generates the list and sends
-        it your way.
+        Download the monthly kirtan duty list from Darbar Sahib Amritsar. Click the
+        button below to get the latest PDF — it's fetched live from the SGPC website.
       </p>
 
       {/* Action card */}
@@ -31,27 +30,20 @@ export default function RaghiPage() {
         </div>
 
         <p className="mt-4 text-zinc-600">
-          Each request kicks off the{" "}
-          <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-sm font-mono text-zinc-700">
-            sgpc-kirtan-duty
-          </code>{" "}
-          n8n workflow, which generates the monthly kirtan duty list from Darbar
-          Sahib Amritsar and delivers it.
+          Each request fetches the current month's kirtan duty list directly from
+          SGPC (Sri Hasht martyrdom... no — Sri Harimandir Sahib / Darbar Sahib
+          Amritsar's official schedule). The list shows which ragis are assigned
+          kirtan on which dates for the coming month.
         </p>
 
         {/* Client interactive part */}
         <RaghiForm />
 
         <p className="mt-4 text-xs text-zinc-400">
-          Triggers the n8n webhook{" "}
+          Source:{" "}
           <code className="rounded bg-zinc-100 px-1 py-0.5 text-xs font-mono">
-            /webhook-test/sgpc-kirtan-duty
-          </code>{" "}
-          on{" "}
-          <code className="rounded bg-zinc-100 px-1 py-0.5 text-xs font-mono">
-            n8n-1lje.srv1948665.hstgr.cloud
+            hs.sgpc.net/kirtan_duty_english_pdf.php
           </code>
-          .
         </p>
       </div>
     </section>
