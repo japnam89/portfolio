@@ -19,6 +19,10 @@ export default function RaghiPage() {
         Download the monthly kirtan duty list from Darbar Sahib Amritsar. Click the
         button below to get the latest PDF — it's fetched live from the SGPC website.
       </p>
+      <div className="mt-6 flex items-center gap-2 text-xs text-zinc-400">
+        <span className="inline-block h-2 w-2 rounded-full bg-emerald-400" />
+        <span>No sign-up, no workflow — just the PDF.</span>
+      </div>
 
       {/* Action card */}
       <div className="mt-10 rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
