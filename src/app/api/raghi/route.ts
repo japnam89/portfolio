@@ -1,7 +1,7 @@
 // POST /api/raghi
 // Fetches the monthly Raghi / kirtan duty list PDF from
 // https://hs.sgpc.net/kirtan_duty_english_pdf.php and streams it
-// back to the client as a download. No n8n dependency.
+// back to the client as a download.
 //
 // On the frontend this is called from /raghi — the button says
 // "Download raagi list of this month" and triggers this endpoint.
