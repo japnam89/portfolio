@@ -42,6 +42,9 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
+# Seed script for the SQLite blog (run on first deploy or to add posts later).
+# Usage on the host: docker compose exec web node scripts/seed-blog-posts.js
+COPY --from=builder /app/scripts ./scripts
 # Data dir for the SQLite blog DB (mounted PVC in AKS; local volume here).
 RUN mkdir -p /app/data
 EXPOSE 3000
