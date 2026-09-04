@@ -19,6 +19,15 @@ const slugify = (title) => {
 };
 
 const insertPost = (title, content) => {
+  // Idempotent: if a post with this exact title already exists, skip it.
+  const existing = db
+    .prepare("SELECT id, slug FROM posts WHERE title = ?")
+    .get(title);
+  if (existing) {
+    console.log("✓ already exists:", existing.slug, "|", title.slice(0, 50));
+    return existing;
+  }
+
   let slug = slugify(title);
   let n = 1;
   let check = db
