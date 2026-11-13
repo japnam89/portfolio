@@ -1,7 +1,7 @@
 import { certificates, LINKEDIN_CERTS_URL } from "@/data/certificates";
 
 // "/certificates". Renders a responsive grid of picture tiles, ordered
-// ascending by year (data is already sorted). Each tile shows the badge art
+// descending by year (data is already sorted). Each tile shows the badge art
 // (when available), name, issuer, year, and a verify link.
 export default function Certificates() {
   return (
