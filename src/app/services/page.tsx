@@ -18,6 +18,21 @@ type Service = {
 
 const services: Service[] = [
   {
+    href: "/raghi",
+    icon: "📋",
+    title: "Raghi List",
+    desc: "Download the monthly kirtan duty list from Darbar Sahib Amritsar — fetched live from SGPC each time you click.",
+    cta: "Get the list →",
+  },
+  {
+    href: "/receipt",
+    icon: "🧾",
+    title: "Receipt Scanner",
+    desc: "Scan receipts and keep your expense records organized.",
+    cta: "Scan a receipt →",
+    external: true,
+  },
+  {
     href: "/domains",
     icon: "🌐",
     title: "Buy / Sell Domains",
@@ -30,14 +45,6 @@ const services: Service[] = [
     title: "Doc to PDF",
     desc: "Convert Word, PowerPoint, Excel, OpenDocument and plain text to PDF — free, processed on-server with LibreOffice, files never leave the server.",
     cta: "Convert a file →",
-  },
-  {
-    href: "/receipt",
-    icon: "🧾",
-    title: "Receipt Scanner",
-    desc: "Scan receipts and keep your expense records organized.",
-    cta: "Scan a receipt →",
-    external: true,
   },
   {
     href: "/diagrams",
@@ -60,13 +67,6 @@ const services: Service[] = [
     desc: "Personal coaching with a Staff Azure Architect — landing zones, AKS, Terraform, identity, and solution design, tailored to your level.",
     cta: "Book a session →",
   },
-  {
-    href: "/raghi",
-    icon: "📋",
-    title: "Raghi List",
-    desc: "Download the monthly kirtan duty list from Darbar Sahib Amritsar — fetched live from SGPC each time you click.",
-    cta: "Get the list →",
-  },
 ];
 
 export default function ServicesPage() {
@@ -77,8 +77,9 @@ export default function ServicesPage() {
         <h1 className="text-4xl font-bold tracking-tight">Services</h1>
       </div>
       <p className="mt-4 max-w-2xl text-lg text-zinc-600">
-        A few tools and utilities I&apos;ve bundled into the site — from trading
-        ENS domains to quick document conversion and architecture diagrams.
+        A few tools and utilities I&apos;ve bundled into the site — scan receipts,
+        get the monthly Raghi List, browse ENS domains, convert documents and
+        view architecture diagrams.
       </p>
 
       <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
