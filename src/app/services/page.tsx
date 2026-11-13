@@ -7,7 +7,16 @@ export const metadata: Metadata = {
     "Tools & utilities: buy/sell ENS domains, convert documents to PDF, and view architecture diagrams.",
 };
 
-const services = [
+type Service = {
+  href: string;
+  icon: string;
+  title: string;
+  desc: string;
+  cta: string;
+  external?: boolean;
+};
+
+const services: Service[] = [
   {
     href: "/domains",
     icon: "🌐",
@@ -21,6 +30,14 @@ const services = [
     title: "Doc to PDF",
     desc: "Convert Word, PowerPoint, Excel, OpenDocument and plain text to PDF — free, processed on-server with LibreOffice, files never leave the server.",
     cta: "Convert a file →",
+  },
+  {
+    href: "/receipt",
+    icon: "🧾",
+    title: "Receipt Scanner",
+    desc: "Scan receipts and keep your expense records organized.",
+    cta: "Scan a receipt →",
+    external: true,
   },
   {
     href: "/diagrams",
@@ -65,24 +82,34 @@ export default function ServicesPage() {
       </p>
 
       <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {services.map((s) => (
-          <Link
-            key={s.href}
-            href={s.href}
-            className="group flex flex-col rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl"
-          >
-            <span className="text-4xl">{s.icon}</span>
-            <h2 className="mt-4 text-xl font-semibold text-zinc-900">
-              {s.title}
-            </h2>
-            <p className="mt-2 flex-1 text-sm leading-relaxed text-zinc-600">
-              {s.desc}
-            </p>
-            <span className="mt-5 text-sm font-semibold text-blue-600 transition-colors group-hover:text-blue-700">
-              {s.cta}
-            </span>
-          </Link>
-        ))}
+        {services.map((s) => {
+          const className =
+            "group flex flex-col rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl";
+          const content = (
+            <>
+              <span className="text-4xl">{s.icon}</span>
+              <h2 className="mt-4 text-xl font-semibold text-zinc-900">
+                {s.title}
+              </h2>
+              <p className="mt-2 flex-1 text-sm leading-relaxed text-zinc-600">
+                {s.desc}
+              </p>
+              <span className="mt-5 text-sm font-semibold text-blue-600 transition-colors group-hover:text-blue-700">
+                {s.cta}
+              </span>
+            </>
+          );
+
+          return s.external ? (
+            <a key={s.href} href={s.href} className={className}>
+              {content}
+            </a>
+          ) : (
+            <Link key={s.href} href={s.href} className={className}>
+              {content}
+            </Link>
+          );
+        })}
       </div>
     </section>
   );
