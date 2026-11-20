@@ -20,6 +20,22 @@ function formatDate(iso: string) {
   });
 }
 
+function firstUsableMarkdownImage(content: string): string {
+  const match = content.match(
+    /!\[[^\]]*]\(\s*(?:<([^>]+)>|([^\s)]+))(?:\s+["'][^)]*["'])?\s*\)/,
+  );
+  const source = match?.[1] ?? match?.[2];
+  if (!source) return "";
+
+  try {
+    const url = new URL(source);
+    if (url.protocol !== "https:" || url.hostname === "your-image-url.png") return "";
+    return url.toString();
+  } catch {
+    return "";
+  }
+}
+
 // "/blog". Posts are read from the SQLite DB at request time.
 export default async function Blog() {
   let posts: Post[] = [];
@@ -32,13 +48,19 @@ export default async function Blog() {
   // Resolve cover images (storage keys -> fresh presigned URLs) up front.
   const covers = await Promise.all(
     posts.map(async (p) => {
-      if (!p.cover) return "";
-      if (p.cover.startsWith("http")) return p.cover;
-      try {
-        return await presignGet(p.cover);
-      } catch {
-        return "";
+      if (p.cover) {
+        if (p.cover.startsWith("http")) {
+          if (firstUsableMarkdownImage(`![cover](${p.cover})`)) return p.cover;
+        } else {
+          try {
+            return await presignGet(p.cover);
+          } catch {
+            // Fall back to an inline article image when a cover cannot be resolved.
+          }
+        }
       }
+
+      return firstUsableMarkdownImage(p.content);
     }),
   );
 
