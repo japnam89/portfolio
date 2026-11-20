@@ -17,7 +17,7 @@ export default function RaghiPage() {
       </div>
       <p className="mt-4 text-lg text-zinc-600">
         Download the monthly kirtan duty list from Darbar Sahib Amritsar. Click the
-        button below to get the latest PDF — it's fetched live from the SGPC website.
+        button below to get the latest PDF — it&apos;s fetched live from the SGPC website.
       </p>
       <div className="mt-6 flex items-center gap-2 text-xs text-zinc-400">
         <span className="inline-block h-2 w-2 rounded-full bg-emerald-400" />
@@ -34,9 +34,9 @@ export default function RaghiPage() {
         </div>
 
         <p className="mt-4 text-zinc-600">
-          Each request fetches the current month's kirtan duty list directly from
+          Each request fetches the current month&apos;s kirtan duty list directly from
           SGPC (Sri Hasht martyrdom... no — Sri Harimandir Sahib / Darbar Sahib
-          Amritsar's official schedule). The list shows which ragis are assigned
+          Amritsar&apos;s official schedule). The list shows which ragis are assigned
           kirtan on which dates for the coming month.
         </p>
 
