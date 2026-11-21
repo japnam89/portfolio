@@ -105,7 +105,7 @@ export default function Navbar() {
 
         {/* Desktop links */}
         <ul className="hidden items-center gap-1 text-sm font-medium text-zinc-600 md:flex">
-          {links.map((link) => (
+          {links.slice(0, 2).map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
@@ -164,6 +164,17 @@ export default function Navbar() {
               </div>
             )}
           </li>
+
+          {links.slice(2).map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className="rounded-full px-3.5 py-2 transition-colors hover:bg-zinc-900/5 hover:text-zinc-900"
+              >
+                {link.label}
+              </Link>
+            </li>
+          ))}
         </ul>
 
         <div className="hidden md:block">
@@ -212,7 +223,7 @@ export default function Navbar() {
       {open && (
         <div className="border-t border-white/40 bg-white/95 px-6 py-4 md:hidden">
           <ul className="flex flex-col gap-1 text-sm font-medium text-zinc-700">
-            {links.map((link) => (
+            {links.slice(0, 2).map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
@@ -237,6 +248,18 @@ export default function Navbar() {
                 >
                   <span>{s.icon}</span>
                   {s.label}
+                </Link>
+              </li>
+            ))}
+
+            {links.slice(2).map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="block rounded-lg px-3 py-2.5 transition-colors hover:bg-zinc-900/5 hover:text-zinc-900"
+                  onClick={() => setOpen(false)}
+                >
+                  {link.label}
                 </Link>
               </li>
             ))}
