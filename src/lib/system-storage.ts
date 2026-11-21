@@ -35,12 +35,10 @@ const client = new S3Client({
 });
 
 export const PHOTOS_PREFIX = "photos/";
-const IMAGE_RE = /\.(jpe?g|png|webp|gif|avif|bmp)$/i;
 
 // List every image object in the photos bucket. Objects are stored with bare
-// keys (e.g. "DSC08068.JPG") inside the "photos" bucket, so we list with no
-// prefix and filter by extension. (Listing with Prefix "photos/" would
-// double up to "photos/photos/..." and return nothing.)
+// keys inside the "photos" bucket, so list with no prefix. Object names may
+// be extensionless, so only skip empty keys and directory markers.
 export async function listPhotoKeys(): Promise<string[]> {
   const keys: string[] = [];
   let continuation: string | undefined;
@@ -52,7 +50,7 @@ export async function listPhotoKeys(): Promise<string[]> {
       })
     );
     for (const obj of res.Contents ?? []) {
-      if (obj.Key && IMAGE_RE.test(obj.Key)) keys.push(obj.Key);
+      if (obj.Key && !obj.Key.endsWith("/")) keys.push(obj.Key);
     }
     continuation = res.IsTruncated ? res.NextContinuationToken : undefined;
   } while (continuation);
