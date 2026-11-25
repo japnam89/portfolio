@@ -172,11 +172,11 @@ export async function POST(request: Request) {
 
   const filename =
     language === "punjabi"
-      ? `ਰਾਗੀ_ਸੂਚੀ_${PUNJABI_MONTH_NAMES[schedule.monthIndex]}_${schedule.year}_ਪੰਜਾਬੀ.pdf`
-      : `Raghi_List_${schedule.month}_${schedule.year}_English.pdf`;
+      ? `ਕੀਰਤਨ ਡਿਊਟੀਆਂ ਦੀ ਸੂਚੀ - ਸੱਚਖੰਡ ਸ੍ਰੀ ਹਰਿਮੰਦਰ ਸਾਹਿਬ - ${PUNJABI_MONTH_NAMES[schedule.monthIndex]} ${schedule.year}.pdf`
+      : `List of Kirtan Duties - Sachkhand Sri Harmandir Sahib - ${schedule.month} ${schedule.year}.pdf`;
   const fallbackFilename =
     language === "punjabi"
-      ? `Raghi_List_${schedule.month}_${schedule.year}_Punjabi.pdf`
+      ? `List of Kirtan Duties - Sachkhand Sri Harmandir Sahib - ${schedule.month} ${schedule.year}.pdf`
       : filename;
   const headers = new Headers({
     "Content-Type": "application/pdf",
