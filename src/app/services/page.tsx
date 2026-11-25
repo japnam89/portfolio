@@ -26,7 +26,7 @@ const services: Service[] = [
     cta: "Get the list →",
   },
   {
-    href: "/receipt",
+    href: "https://japnam.tech/receipt",
     icon: "🧾",
     title: "Receipt Scanner",
     desc: "Scan receipts and keep your expense records organized.",
