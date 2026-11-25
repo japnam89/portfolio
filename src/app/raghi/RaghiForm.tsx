@@ -32,7 +32,12 @@ export default function RaghiForm() {
       }
 
       const contentDisposition = res.headers.get("Content-Disposition");
-      const filename = contentDisposition?.match(/filename="([^"]+)"/i)?.[1];
+      const encodedFilename = contentDisposition?.match(
+        /filename\*=UTF-8''([^;]+)/i,
+      )?.[1];
+      const filename = encodedFilename
+        ? decodeURIComponent(encodedFilename)
+        : contentDisposition?.match(/filename="([^"]+)"/i)?.[1];
       if (!filename) {
         throw new Error("The server did not provide a PDF filename.");
       }

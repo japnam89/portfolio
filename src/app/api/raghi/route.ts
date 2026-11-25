@@ -38,6 +38,21 @@ const MONTH_NAMES = [
   "December",
 ];
 
+const PUNJABI_MONTH_NAMES = [
+  "ਜਨਵਰੀ",
+  "ਫਰਵਰੀ",
+  "ਮਾਰਚ",
+  "ਅਪ੍ਰੈਲ",
+  "ਮਈ",
+  "ਜੂਨ",
+  "ਜੁਲਾਈ",
+  "ਅਗਸਤ",
+  "ਸਤੰਬਰ",
+  "ਅਕਤੂਬਰ",
+  "ਨਵੰਬਰ",
+  "ਦਸੰਬਰ",
+];
+
 async function getScheduleMonth(pdfData: Uint8Array) {
   const loadingTask = getDocument({ data: pdfData.slice() });
   const document = await loadingTask.promise;
@@ -71,7 +86,7 @@ async function getScheduleMonth(pdfData: Uint8Array) {
       throw new Error("The schedule date in the PDF is invalid.");
     }
 
-    return { month: MONTH_NAMES[month - 1], year };
+    return { month: MONTH_NAMES[month - 1], monthIndex: month - 1, year };
   } finally {
     await loadingTask.destroy();
   }
@@ -155,11 +170,17 @@ export async function POST(request: Request) {
     );
   }
 
-  const languageName = language === "english" ? "English" : "Punjabi";
-  const filename = `Raghi_List_${schedule.month}_${schedule.year}_${languageName}.pdf`;
+  const filename =
+    language === "punjabi"
+      ? `ਰਾਗੀ_ਸੂਚੀ_${PUNJABI_MONTH_NAMES[schedule.monthIndex]}_${schedule.year}_ਪੰਜਾਬੀ.pdf`
+      : `Raghi_List_${schedule.month}_${schedule.year}_English.pdf`;
+  const fallbackFilename =
+    language === "punjabi"
+      ? `Raghi_List_${schedule.month}_${schedule.year}_Punjabi.pdf`
+      : filename;
   const headers = new Headers({
     "Content-Type": "application/pdf",
-    "Content-Disposition": `attachment; filename="${filename}"`,
+    "Content-Disposition": `attachment; filename="${fallbackFilename}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
   });
   headers.set("Cache-Control", "no-cache, no-store, must-revalidate");
 
