@@ -1,6 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { listPosts, createPost } from "@/lib/blog";
 import { sendEmail } from "@/lib/email";
+import {
+  ADMIN_SESSION_COOKIE,
+  isAdminPassword,
+  isValidAdminSession,
+} from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,8 +20,15 @@ export async function GET() {
   }
 }
 
-// POST /api/posts -> create (open, no auth) + email the owner.
-export async function POST(req: Request) {
+// POST /api/posts -> create (admin only) + email the owner.
+export async function POST(req: NextRequest) {
+  const hasSession = isValidAdminSession(
+    req.cookies.get(ADMIN_SESSION_COOKIE)?.value,
+  );
+  if (!hasSession && !isAdminPassword(req.headers.get("x-admin-password"))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   let body: { title?: string; content?: string; excerpt?: string; cover?: string };
   try {
     body = await req.json();
