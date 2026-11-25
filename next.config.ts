@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   // site while working locally). Requiring it at runtime avoids that.
   serverExternalPackages: [
     "pdfkit",
+    "pdfjs-dist",
     "better-sqlite3",
     "@aws-sdk/client-s3",
     "@aws-sdk/s3-request-presigner",

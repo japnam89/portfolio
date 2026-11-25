@@ -1,4 +1,5 @@
 import { projects } from "@/data/projects";
+import LocalizedText from "@/components/LocalizedText";
 
 // "/projects". Maps over the `projects` array and renders a card per entry.
 export default function Projects() {
@@ -13,10 +14,10 @@ export default function Projects() {
       <div className="mx-auto max-w-5xl px-6 py-20">
         <h1 className="flex items-center gap-3 text-4xl font-bold tracking-tight sm:text-5xl">
           <span className="text-3xl">🚀</span>
-          <span className="text-gradient">Projects</span>
+          <span className="text-gradient"><LocalizedText text="Projects" /></span>
         </h1>
         <p className="mt-4 text-lg text-zinc-600">
-          Things I&apos;ve built while learning. Each one taught me something new.
+          <LocalizedText text="Things I've built while learning. Each one taught me something new." />
         </p>
 
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -46,7 +47,7 @@ export default function Projects() {
                   rel="noopener noreferrer"
                   className="mt-4 text-sm font-medium text-blue-600 hover:underline"
                 >
-                  View →
+                  <LocalizedText text="View →" />
                 </a>
               )}
             </article>

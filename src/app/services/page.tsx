@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import LocalizedText from "@/components/LocalizedText";
 
 export const metadata: Metadata = {
   title: "Services — Japnam Singh",
@@ -74,12 +75,12 @@ export default function ServicesPage() {
     <section className="mx-auto max-w-5xl px-6 py-20">
       <div className="flex items-center gap-3">
         <span className="text-3xl">🛠️</span>
-        <h1 className="text-4xl font-bold tracking-tight">Services</h1>
+        <h1 className="text-4xl font-bold tracking-tight">
+          <LocalizedText text="Services" />
+        </h1>
       </div>
       <p className="mt-4 max-w-2xl text-lg text-zinc-600">
-        A few tools and utilities I&apos;ve bundled into the site — scan receipts,
-        get the monthly Raghi List, browse ENS domains, convert documents and
-        view architecture diagrams.
+        <LocalizedText text="A few tools and utilities I've bundled into the site — scan receipts, get the monthly Raghi List, browse ENS domains, convert documents and view architecture diagrams." />
       </p>
 
       <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -90,13 +91,13 @@ export default function ServicesPage() {
             <>
               <span className="text-4xl">{s.icon}</span>
               <h2 className="mt-4 text-xl font-semibold text-zinc-900">
-                {s.title}
+                <LocalizedText text={s.title} />
               </h2>
               <p className="mt-2 flex-1 text-sm leading-relaxed text-zinc-600">
-                {s.desc}
+                <LocalizedText text={s.desc} />
               </p>
               <span className="mt-5 text-sm font-semibold text-blue-600 transition-colors group-hover:text-blue-700">
-                {s.cta}
+                <LocalizedText text={s.cta} />
               </span>
             </>
           );

@@ -6,10 +6,7 @@
 # 127.0.0.1:3000. The traefik labels below let Traefik route japnam.tech
 # -> this service automatically.
 #
-# The Raghi-list feature lives in the Next.js app as a `/raghi` page with an
-# "Download Raghi list of this month" button. Clicking it POSTs to /api/raghi
-# which triggers the n8n webhook at
-#   https://n8n-1lje.srv1948665.hstgr.cloud/webhook-test/sgpc-kirtan-duty
+# The Raghi page fetches the monthly PDF directly from SGPC through /api/raghi.
 #
 # Usage (on the server, in the repo dir):
 #   docker compose pull && docker compose up -d

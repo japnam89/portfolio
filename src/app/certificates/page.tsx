@@ -1,4 +1,5 @@
 import { certificates, LINKEDIN_CERTS_URL } from "@/data/certificates";
+import LocalizedText from "@/components/LocalizedText";
 
 // "/certificates". Renders a responsive grid of picture tiles, ordered
 // descending by year (data is already sorted). Each tile shows the badge art
@@ -9,11 +10,10 @@ export default function Certificates() {
       <div className="text-center">
         <h1 className="flex items-center justify-center gap-3 text-4xl font-bold tracking-tight sm:text-5xl">
           <span className="text-3xl">🎖️</span>
-          Certifications
+          <LocalizedText text="Certifications" />
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-zinc-600">
-          Professional certifications and credentials I&apos;ve earned along the
-          way — from foundational Azure to AI Engineering.
+          <LocalizedText text="Professional certifications and credentials I've earned along the way — from foundational Azure to AI Engineering." />
         </p>
       </div>
 
@@ -58,7 +58,7 @@ export default function Certificates() {
                     rel="noopener noreferrer"
                     className="text-sm font-medium text-blue-600 hover:underline"
                   >
-                    Verify ↗
+                    <LocalizedText text="Verify ↗" />
                   </a>
                 ) : (
                   <a
@@ -67,7 +67,7 @@ export default function Certificates() {
                     rel="noopener noreferrer"
                     className="text-sm font-medium text-blue-600 hover:underline"
                   >
-                    LinkedIn ↗
+                    <LocalizedText text="LinkedIn ↗" />
                   </a>
                 )}
               </div>

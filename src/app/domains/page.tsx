@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { domains } from "@/data/domains";
 import DomainOfferForm from "./DomainOfferForm";
+import LocalizedText from "@/components/LocalizedText";
 
 export const metadata: Metadata = {
   title: "ENS Domains — Japnam Singh",
@@ -16,19 +17,18 @@ export default function DomainsPage() {
     <section className="mx-auto max-w-5xl px-6 py-20">
       <div className="flex items-center gap-3">
         <span className="text-3xl">🌐</span>
-        <h1 className="text-4xl font-bold tracking-tight">ENS Domains</h1>
+        <h1 className="text-4xl font-bold tracking-tight">
+          <LocalizedText text="ENS Domains" />
+        </h1>
       </div>
       <p className="mt-4 max-w-2xl text-lg text-zinc-600">
-        A selection of <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-sm">.eth</code>{" "}
-        domains I&apos;ve won across Metamask, Namebase and ETH World. If you see
-        one you want, send a quote — I&apos;m open to serious offers on the ones
-        marked &ldquo;For sale&rdquo;.
+        <LocalizedText text="A selection of .eth domains I've won across Metamask, Namebase and ETH World. If you see one you want, send a quote — I'm open to serious offers on the ones marked For sale." />
       </p>
 
       {forSale.length > 0 && (
         <div className="mt-12">
           <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-zinc-500">
-            Open to offers
+            <LocalizedText text="Open to offers" />
           </h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {forSale.map((d) => (
@@ -38,7 +38,7 @@ export default function DomainsPage() {
               >
                 <p className="text-lg font-semibold text-zinc-900">{d.name}</p>
                 <p className="mt-1 text-xs text-zinc-500">
-                  Won via {d.acquiredVia}
+                  <LocalizedText text="Won via" /> {d.acquiredVia}
                   {d.wonDate ? ` · ${d.wonDate}` : ""}
                 </p>
                 {d.description && (
@@ -56,7 +56,7 @@ export default function DomainsPage() {
       {held.length > 0 && (
         <div className="mt-12">
           <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-zinc-500">
-            Held (not for sale)
+            <LocalizedText text="Held (not for sale)" />
           </h2>
           <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {held.map((d) => (
@@ -72,7 +72,7 @@ export default function DomainsPage() {
                   </p>
                 </div>
                 <span className="rounded-full bg-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-600">
-                  Held
+                  <LocalizedText text="Held" />
                 </span>
               </li>
             ))}

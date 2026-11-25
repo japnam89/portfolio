@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { skills } from "@/data/projects";
+import LocalizedText from "@/components/LocalizedText";
 
 // "/about". Shows the AI-generated Azure Architect portrait + bio + skills.
 export default function About() {
@@ -29,21 +30,19 @@ export default function About() {
         {/* Bio */}
         <div className="stagger">
           <p className="text-sm font-semibold uppercase tracking-widest text-blue-500">
-            About me
+            <LocalizedText text="About me" />
           </p>
           <h1 className="mt-3 flex items-center gap-3 text-4xl font-bold tracking-tight sm:text-5xl">
             <span className="text-3xl">👤</span>
             <span className="text-gradient">Japnam Singh</span>
           </h1>
           <p className="mt-6 text-lg leading-8 text-zinc-600">
-            I&apos;m a <strong className="text-zinc-900">Staff Engineer</strong>{" "}
-            and <strong className="text-zinc-900">Azure Architect</strong> with
-            over 10 years of software engineering experience. I design and lead
-            resilient cloud platforms on Azure, set technical direction for
-            platform teams, and stay hands-on with code.
+            <LocalizedText text="I'm a Staff Engineer and Azure Architect with over 10 years of software engineering experience. I design and lead resilient cloud platforms on Azure, set technical direction for platform teams, and stay hands-on with code." />
           </p>
 
-          <h2 className="mt-12 text-2xl font-semibold">What I work with</h2>
+          <h2 className="mt-12 text-2xl font-semibold">
+            <LocalizedText text="What I work with" />
+          </h2>
           <ul className="mt-4 flex flex-wrap gap-3">
             {skills.map((skill) => (
               <li

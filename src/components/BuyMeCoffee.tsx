@@ -1,4 +1,5 @@
 import Link from "next/link";
+import LocalizedText from "./LocalizedText";
 
 // "Buy me a coffee" button. Links out to your PayPal (set NEXT_PUBLIC_PAYPAL_URL
 // in the hosting env, or replace the default below). NEXT_PUBLIC_ vars are
@@ -32,7 +33,7 @@ export default function BuyMeCoffee() {
         <line x1="10" y1="1" x2="10" y2="4" />
         <line x1="14" y1="1" x2="14" y2="4" />
       </svg>
-      Buy me a coffee
+      <LocalizedText text="Buy me a coffee" />
     </Link>
   );
 }

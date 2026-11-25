@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { metaFor } from "@/data/photos";
+import { useLanguage } from "./LanguageProvider";
 
 type Photo = { key: string; src: string; caption?: {
   alt: string;
@@ -17,6 +18,7 @@ type Photo = { key: string; src: string; caption?: {
 // showing the full metadata. Presigned URLs are short-lived, so it silently
 // re-fetches before they expire and on any load error.
 export default function PhotoGallery() {
+  const { t } = useLanguage();
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [active, setActive] = useState<Photo | null>(null);
   const [failed, setFailed] = useState<Record<string, boolean>>({});
@@ -63,20 +65,20 @@ export default function PhotoGallery() {
     load(); // a fresh presigned URL may have expired — refetch the list
   };
 
-  if (loading) return <p className="text-zinc-500">Loading photos…</p>;
-  if (error) return <p className="text-red-600">{error}</p>;
+  if (loading) return <p className="text-zinc-500">{t("Loading photos…")}</p>;
+  if (error) return <p className="text-red-600">{t(error)}</p>;
   if (photos.length === 0)
     return (
       <p className="rounded-xl border border-dashed border-zinc-300 bg-white/60 px-6 py-12 text-center text-zinc-500 backdrop-blur">
-        Photos are being curated — check back soon. 📷
+        {t("Photos are being curated — check back soon. 📷")}
       </p>
     );
 
   return (
     <>
       <p className="mb-6 text-sm text-zinc-500">
-        {photos.length} {photos.length === 1 ? "photo" : "photos"} · click any
-        frame to view it full size with details.
+        {photos.length} {t(photos.length === 1 ? "photo" : "photos")} ·{" "}
+        {t("click any frame to view it full size with details.")}
       </p>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -135,7 +137,7 @@ export default function PhotoGallery() {
           <button
             type="button"
             onClick={() => setActive(null)}
-            aria-label="Close"
+            aria-label={t("Close")}
             className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-2xl leading-none text-white transition hover:bg-white/20"
           >
             ×

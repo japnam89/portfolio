@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 type Result = {
   pdfUrl: string;
@@ -11,6 +12,7 @@ const ACCEPT =
   ".doc,.docx,.odt,.rtf,.txt,.ppt,.pptx,.odp,.xls,.xlsx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.oasis.opendocument.text,application/rtf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.oasis.opendocument.presentation,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 export default function ConvertPage() {
+  const { t } = useLanguage();
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>("");
@@ -49,12 +51,10 @@ export default function ConvertPage() {
     <section className="mx-auto max-w-2xl px-6 py-20">
       <div className="flex items-center gap-3">
         <span className="text-3xl">📄</span>
-        <h1 className="text-4xl font-bold tracking-tight">Doc to PDF</h1>
+        <h1 className="text-4xl font-bold tracking-tight">        {t("Doc to PDF")}</h1>
       </div>
       <p className="mt-4 text-lg text-zinc-600">
-        Convert Word, PowerPoint, Excel, OpenDocument and plain text files to PDF
-        for free — files are processed on this server and never sent to a third
-        party.
+        {t("Convert Word, PowerPoint, Excel, OpenDocument and plain text files to PDF for free — files are processed on this server and never sent to a third party.")}
       </p>
 
       <form
@@ -62,7 +62,7 @@ export default function ConvertPage() {
         className="mt-10 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm"
       >
         <label className="block text-sm font-medium text-zinc-700">
-          Choose a document (max 25 MB)
+          {t("Choose a document (max 25 MB)")}
         </label>
         <input
           ref={inputRef}
@@ -78,7 +78,7 @@ export default function ConvertPage() {
             disabled={!file || busy}
             className="rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {busy ? "Converting…" : "Convert to PDF"}
+            {busy ? t("Converting…") : t("Convert to PDF")}
           </button>
           {file && (
             <span className="truncate text-sm text-zinc-500">{file.name}</span>
@@ -87,7 +87,7 @@ export default function ConvertPage() {
 
         {busy && (
           <p className="mt-4 text-sm text-zinc-500">
-            Spinning up LibreOffice headless — this can take a few seconds…
+            {t("Spinning up LibreOffice headless — this can take a few seconds…")}
           </p>
         )}
         {error && (
@@ -98,7 +98,7 @@ export default function ConvertPage() {
         {result && (
           <div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
             <p className="text-sm font-medium text-emerald-800">
-              Done! Your PDF is ready.
+              {t("Done! Your PDF is ready.")}
             </p>
             <div className="mt-3 flex flex-wrap gap-3">
               <a
@@ -106,7 +106,7 @@ export default function ConvertPage() {
                 download={result.filename}
                 className="rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
               >
-                Download PDF ↓
+                {t("Download PDF ↓")}
               </a>
               <a
                 href={result.pdfUrl}
@@ -114,7 +114,7 @@ export default function ConvertPage() {
                 rel="noopener noreferrer"
                 className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-emerald-700 ring-1 ring-emerald-300 hover:bg-emerald-100"
               >
-                Open in new tab ↗
+                {t("Open in new tab ↗")}
               </a>
             </div>
           </div>
@@ -122,9 +122,8 @@ export default function ConvertPage() {
       </form>
 
       <p className="mt-6 text-xs text-zinc-400">
-        Supported: DOC, DOCX, ODT, RTF, TXT, PPT, PPTX, ODP, XLS, XLSX.
-        Converted files are stored in the <code>convert/</code> prefix of the
-        object bucket and served via short-lived presigned URLs.
+        {t("Supported: DOC, DOCX, ODT, RTF, TXT, PPT, PPTX, ODP, XLS, XLSX.")}
+        {t("Converted files are stored in the convert/ prefix of the object bucket and served via short-lived presigned URLs.")}
       </p>
     </section>
   );

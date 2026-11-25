@@ -1,12 +1,18 @@
 import BuyMeCoffee from "./BuyMeCoffee";
 import SocialLinks from "./SocialLinks";
+import LocalizedText from "./LocalizedText";
 
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer className="border-t border-zinc-200/70 bg-white/70 backdrop-blur">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-8 text-sm text-zinc-500">
-        <span>© {year} Japnam Singh. Built with Next.js &amp; Node.js.</span>
+        <span>
+          <LocalizedText
+            text="© {year} Japnam Singh. Built with Next.js."
+            values={{ year }}
+          />
+        </span>
         <div className="flex items-center gap-5">
           <SocialLinks variant="icons" />
           <BuyMeCoffee />

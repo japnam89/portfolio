@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { diagrams } from "@/data/diagrams";
 import Mermaid from "@/components/Mermaid";
+import LocalizedText from "@/components/LocalizedText";
 
 export const metadata: Metadata = {
   title: "Diagrams — Japnam Singh",
@@ -13,18 +14,17 @@ export default function DiagramsPage() {
     <section className="mx-auto max-w-5xl px-6 py-20">
       <div className="flex items-center gap-3">
         <span className="text-3xl">📊</span>
-        <h1 className="text-4xl font-bold tracking-tight">Diagrams</h1>
+        <h1 className="text-4xl font-bold tracking-tight">
+          <LocalizedText text="Diagrams" />
+        </h1>
       </div>
       <p className="mt-4 max-w-2xl text-lg text-zinc-600">
-        Architecture and sequence diagrams rendered live from{" "}
-        <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-sm">Mermaid</code>{" "}
-        (think <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-sm">.mmd</code>)
-        definitions. Handy for parking flows you want to reference later.
+        <LocalizedText text="Architecture and sequence diagrams rendered live from Mermaid (.mmd) definitions. Handy for parking flows you want to reference later." />
       </p>
 
       {diagrams.length === 0 ? (
         <p className="mt-12 text-zinc-500">
-          No diagrams yet — add entries to{" "}
+          <LocalizedText text="No diagrams yet — add entries to" />{" "}
           <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-sm">
             src/data/diagrams.ts
           </code>

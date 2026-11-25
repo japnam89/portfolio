@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import PhotoGallery from "@/components/PhotoGallery";
+import LocalizedText from "@/components/LocalizedText";
 
 export const metadata: Metadata = {
   title: "Photography — Japnam Singh",
@@ -22,11 +23,12 @@ export default function Photography() {
           height={40}
           className="rounded-lg"
         />
-        <h1 className="text-4xl font-bold tracking-tight">Photography</h1>
+        <h1 className="text-4xl font-bold tracking-tight">
+          <LocalizedText text="Photography" />
+        </h1>
       </div>
       <p className="mt-4 text-lg text-zinc-600">
-        A few frames from travels and everywhere in between. Click any photo to
-        view it full size.
+        <LocalizedText text="A few frames from travels and everywhere in between. Click any photo to view it full size." />
       </p>
 
       <div className="mt-10">

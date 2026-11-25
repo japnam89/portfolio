@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import LocalizedText from "@/components/LocalizedText";
 
 // Home page ("/"). Server component: fetches one feature photo from the
 // existing /api/photos route so the hero always shows a live bucket image.
@@ -32,25 +33,21 @@ export default async function Home() {
       <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 py-24 sm:py-32 lg:grid-cols-2">
         <div className="stagger">
           <p className="text-sm font-semibold uppercase tracking-widest text-blue-500">
-            Staff Engineer &amp; Azure Architect
+            <LocalizedText text="Staff Engineer & Azure Architect" />
           </p>
           <h1 className="mt-3 text-5xl font-bold tracking-tight sm:text-7xl">
             <span className="text-gradient">Japnam Singh</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg text-zinc-600">
-            A <strong className="text-zinc-900">Staff Engineer</strong> and{" "}
-            <strong className="text-zinc-900">Azure Architect</strong> with 10
-            years of software engineering experience. I design resilient cloud
-            platforms, lead platform teams, and still love shipping code — this
-            portfolio is one of them.
+            <LocalizedText text="A Staff Engineer and Azure Architect with 10 years of software engineering experience. I design resilient cloud platforms, lead platform teams, and still love shipping code — this portfolio is one of them." />
           </p>
 
           <div className="mt-9 flex flex-wrap gap-4">
             <Link href="/projects" className="btn-primary">
-              View my projects
+              <LocalizedText text="View my projects" />
             </Link>
             <Link href="/contact" className="btn-ghost">
-              Get in touch
+              <LocalizedText text="Get in touch" />
             </Link>
           </div>
 
@@ -64,7 +61,7 @@ export default async function Home() {
                 href={href}
                 className="rounded-full border border-zinc-200 bg-white/60 px-4 py-1.5 font-medium text-zinc-700 backdrop-blur transition-colors hover:border-blue-300 hover:text-blue-600"
               >
-                {label}
+                <LocalizedText text={label} />
               </Link>
             ))}
           </div>
@@ -85,7 +82,7 @@ export default async function Home() {
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-100 via-indigo-100 to-fuchsia-100 text-zinc-400">
-                Featured photo
+                <LocalizedText text="Featured photo" />
               </div>
             )}
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />

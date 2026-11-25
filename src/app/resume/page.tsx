@@ -1,9 +1,11 @@
 "use client";
 
 import { resume } from "@/data/resume";
+import { useLanguage } from "@/components/LanguageProvider";
 
 // "/resume" — printable resume. "Download PDF" calls /api/resume-pdf.
 export default function ResumePage() {
+  const { t } = useLanguage();
   return (
     <section className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 -z-10">
@@ -21,7 +23,7 @@ export default function ResumePage() {
             <p className="mt-1 text-lg text-zinc-600">{resume.title}</p>
           </div>
           <a href="/api/resume-pdf" className="btn-primary">
-            Download PDF ↓
+            {t("Download PDF ↓")}
           </a>
         </div>
 
@@ -33,7 +35,7 @@ export default function ResumePage() {
 
         <p className="mt-8 text-zinc-600">{resume.summary}</p>
 
-        <h2 className="mt-10 text-xl font-semibold text-zinc-900">Experience</h2>
+        <h2 className="mt-10 text-xl font-semibold text-zinc-900">{t("Experience")}</h2>
         <div className="mt-4 flex flex-col gap-6">
           {resume.experience.map((job) => (
             <div key={job.role + job.company}>
@@ -52,7 +54,7 @@ export default function ResumePage() {
           ))}
         </div>
 
-        <h2 className="mt-10 text-xl font-semibold text-zinc-900">Education</h2>
+        <h2 className="mt-10 text-xl font-semibold text-zinc-900">{t("Education")}</h2>
         <div className="mt-4 flex flex-col gap-3">
           {resume.education.map((e) => (
             <div key={e.degree}>

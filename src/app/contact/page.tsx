@@ -6,8 +6,10 @@
 
 import { useState } from "react";
 import BuyMeCoffee from "@/components/BuyMeCoffee";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function Contact() {
+  const { t } = useLanguage();
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
     "idle"
   );
@@ -36,11 +38,11 @@ export default function Contact() {
 
       if (!res.ok) throw new Error("Request failed");
       setStatus("sent");
-      setMessage("Thanks! Your message was received by the server.");
+      setMessage(t("Thanks! Your message was received by the server."));
       form.reset();
     } catch {
       setStatus("error");
-      setMessage("Something went wrong. Please try again.");
+      setMessage(t("Something went wrong. Please try again."));
     }
   }
 
@@ -55,40 +57,40 @@ export default function Contact() {
       <div className="mx-auto max-w-2xl px-6 py-20">
         <h1 className="flex items-center gap-3 text-4xl font-bold tracking-tight sm:text-5xl">
           <span className="text-3xl">✉️</span>
-          <span className="text-gradient">Contact me</span>
+          <span className="text-gradient">{t("Contact me")}</span>
         </h1>
         <p className="mt-4 text-lg text-zinc-600">
-          Send me a note — this form posts to a Node.js API route I wrote.
+          {t("Send me a note — I'd love to hear from you.")}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-10 flex flex-col gap-5">
           <label className="flex flex-col gap-2 text-sm font-medium">
-            Name
+            {t("Name")}
             <input
               name="name"
               required
               className="rounded-lg border border-zinc-300 bg-white/70 px-4 py-3 text-base outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
-              placeholder="Your name"
+              placeholder={t("Your name")}
             />
           </label>
           <label className="flex flex-col gap-2 text-sm font-medium">
-            Email
+            {t("Email")}
             <input
               name="email"
               type="email"
               required
               className="rounded-lg border border-zinc-300 bg-white/70 px-4 py-3 text-base outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
-              placeholder="you@example.com"
+              placeholder={t("Your email")}
             />
           </label>
           <label className="flex flex-col gap-2 text-sm font-medium">
-            Message
+            {t("Message")}
             <textarea
               name="message"
               required
               rows={5}
               className="rounded-lg border border-zinc-300 bg-white/70 px-4 py-3 text-base outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
-              placeholder="Say hello..."
+              placeholder={t("Say hello...")}
             />
           </label>
 
@@ -97,7 +99,7 @@ export default function Contact() {
             disabled={status === "sending"}
             className="btn-primary disabled:opacity-50"
           >
-            {status === "sending" ? "Sending..." : "Send message"}
+            {status === "sending" ? t("Sending...") : t("Send message")}
           </button>
 
           {message && (
@@ -113,7 +115,7 @@ export default function Contact() {
 
         <div className="mt-10 border-t border-zinc-200/70 pt-8">
           <p className="text-sm text-zinc-500">
-            If my work helped you, you can support it:
+            {t("If my work helped you, you can support it:")}
           </p>
           <div className="mt-4">
             <BuyMeCoffee />

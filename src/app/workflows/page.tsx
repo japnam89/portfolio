@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { workflows } from "@/data/workflows";
+import LocalizedText from "@/components/LocalizedText";
 
 export const metadata: Metadata = {
   title: "Workflow Templates — Japnam Singh",
@@ -12,19 +13,21 @@ export default function WorkflowsPage() {
     <section className="mx-auto max-w-5xl px-6 py-20">
       <div className="flex items-center gap-3">
         <span className="text-3xl">⚡</span>
-        <h1 className="text-4xl font-bold tracking-tight">Workflow Templates</h1>
+        <h1 className="text-4xl font-bold tracking-tight">
+          <LocalizedText text="Workflow Templates" />
+        </h1>
       </div>
       <p className="mt-4 max-w-2xl text-lg text-zinc-600">
-        Free <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-sm">n8n</code>{" "}
-        workflow templates you can import and adapt. Click{" "}
-        <span className="font-medium">Download</span> to grab the{" "}
+        <LocalizedText text="Free n8n workflow templates you can import and adapt. Click" />{" "}
+        <span className="font-medium"><LocalizedText text="Download" /></span>{" "}
+        <LocalizedText text="to grab the" />{" "}
         <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-sm">.json</code>,
-        then import it into your own n8n instance (Settings → Import from File).
+        {" "}<LocalizedText text="then import it into your own n8n instance (Settings → Import from File)." />
       </p>
 
       {workflows.length === 0 ? (
         <p className="mt-12 text-zinc-500">
-          No templates yet — add entries to{" "}
+          <LocalizedText text="No templates yet — add entries to" />{" "}
           <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-sm">
             src/data/workflows.ts
           </code>
@@ -65,11 +68,11 @@ export default function WorkflowsPage() {
                     download
                     className="text-sm font-semibold text-emerald-600 hover:underline"
                   >
-                    ⬇ Download JSON
+                    <LocalizedText text="⬇ Download JSON" />
                   </a>
                 ) : (
                   <span className="text-sm font-medium text-zinc-300">
-                    Download soon
+                    <LocalizedText text="Download soon" />
                   </span>
                 )}
                 {w.link && (
@@ -79,7 +82,7 @@ export default function WorkflowsPage() {
                     rel="noopener noreferrer"
                     className="text-sm font-medium text-blue-600 hover:underline"
                   >
-                    Details ↗
+                    <LocalizedText text="Details ↗" />
                   </a>
                 )}
               </div>

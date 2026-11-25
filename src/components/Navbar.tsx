@@ -3,6 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
+import { languageOptions } from "@/lib/translations";
+import { useLanguage } from "./LanguageProvider";
 
 // A navigation bar. `Link` is Next.js's special anchor tag — client-side navigation.
 // Becomes a hamburger menu on small screens. Social links are intentionally
@@ -63,12 +65,19 @@ const services: Service[] = [
     desc: "Personal cloud/architecture coaching with a Staff Azure Architect.",
     icon: "🎓",
   },
+  {
+    href: "/receipt",
+    label: "Receipt Scanner",
+    desc: "Scan receipts and keep your expense records organized.",
+    icon: "🧾",
+  },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const servicesRef = useRef<HTMLLIElement>(null);
+  const { language, setLanguage, t } = useLanguage();
 
   // Close the desktop dropdown on outside click.
   useEffect(() => {
@@ -84,24 +93,46 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/40 bg-gradient-to-b from-white/80 to-white/50 backdrop-blur-xl">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-        <Link
-          href="/"
-          className="group flex items-center gap-2.5 rounded-full px-1 py-0.5"
-          onClick={() => setOpen(false)}
-        >
-          <span className="flex items-center justify-center rounded-xl bg-white p-1.5 shadow-sm ring-1 ring-zinc-200/70 transition-transform group-hover:scale-105">
-            <Image
-              src="/logo.png"
-              alt="Japnam Singh"
-              width={22}
-              height={22}
-              className="rounded-md"
-            />
-          </span>
-          <span className="text-base font-semibold tracking-tight text-zinc-900">
-            Japnam<span className="text-gradient">.tech</span>
-          </span>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/"
+            className="group flex items-center gap-2.5 rounded-full px-1 py-0.5"
+            onClick={() => setOpen(false)}
+          >
+            <span className="flex items-center justify-center rounded-xl bg-white p-1.5 shadow-sm ring-1 ring-zinc-200/70 transition-transform group-hover:scale-105">
+              <Image
+                src="/logo.png"
+                alt="Japnam Singh"
+                width={22}
+                height={22}
+                className="rounded-md"
+              />
+            </span>
+            <span className="text-base font-semibold tracking-tight text-zinc-900">
+              Japnam<span className="text-gradient">.tech</span>
+            </span>
+          </Link>
+          <label className="sr-only" htmlFor="site-language">
+            {t("Language")}
+          </label>
+          <select
+            id="site-language"
+            value={language}
+            onChange={(event) => {
+              const nextLanguage = languageOptions.find(
+                (option) => option.value === event.target.value,
+              );
+              if (nextLanguage) setLanguage(nextLanguage.value);
+            }}
+            className="max-w-24 rounded-full border border-zinc-200 bg-white/70 px-2.5 py-1.5 text-xs font-medium text-zinc-700 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
+          >
+            {languageOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {/* Desktop links */}
         <ul className="hidden items-center gap-1 text-sm font-medium text-zinc-600 md:flex">
@@ -111,7 +142,7 @@ export default function Navbar() {
                 href={link.href}
                 className="rounded-full px-3.5 py-2 transition-colors hover:bg-zinc-900/5 hover:text-zinc-900"
               >
-                {link.label}
+                {t(link.label)}
               </Link>
             </li>
           ))}
@@ -125,7 +156,7 @@ export default function Navbar() {
               onClick={() => setServicesOpen((v) => !v)}
               className="flex items-center gap-1 rounded-full px-3.5 py-2 transition-colors hover:bg-zinc-900/5 hover:text-zinc-900"
             >
-              Services
+              {t("Services")}
               <svg
                 className={`h-3.5 w-3.5 transition-transform ${servicesOpen ? "rotate-180" : ""}`}
                 fill="none"
@@ -153,10 +184,10 @@ export default function Navbar() {
                     <span className="text-2xl leading-none">{s.icon}</span>
                     <span>
                       <span className="block text-sm font-semibold text-zinc-900">
-                        {s.label}
+                        {t(s.label)}
                       </span>
                       <span className="mt-0.5 block text-xs text-zinc-500">
-                        {s.desc}
+                        {t(s.desc)}
                       </span>
                     </span>
                   </Link>
@@ -171,7 +202,7 @@ export default function Navbar() {
                 href={link.href}
                 className="rounded-full px-3.5 py-2 transition-colors hover:bg-zinc-900/5 hover:text-zinc-900"
               >
-                {link.label}
+                {t(link.label)}
               </Link>
             </li>
           ))}
@@ -182,14 +213,14 @@ export default function Navbar() {
             href="/contact"
             className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-zinc-700"
           >
-            Contact
+            {t("Contact")}
           </Link>
         </div>
 
         {/* Mobile hamburger */}
         <button
           type="button"
-          aria-label="Toggle menu"
+          aria-label={t("Toggle menu")}
           aria-expanded={open}
           className="rounded-md p-2 text-zinc-700 transition-colors hover:bg-zinc-900/5 md:hidden"
           onClick={() => setOpen((v) => !v)}
@@ -230,14 +261,14 @@ export default function Navbar() {
                   className="block rounded-lg px-3 py-2.5 transition-colors hover:bg-zinc-900/5 hover:text-zinc-900"
                   onClick={() => setOpen(false)}
                 >
-                  {link.label}
+                  {t(link.label)}
                 </Link>
               </li>
             ))}
 
             {/* Services group in mobile menu */}
             <li className="px-3 pt-3 text-xs font-semibold uppercase tracking-wide text-zinc-400">
-              Services
+              {t("Services")}
             </li>
             {services.map((s) => (
               <li key={s.href}>
@@ -247,7 +278,7 @@ export default function Navbar() {
                   onClick={() => setOpen(false)}
                 >
                   <span>{s.icon}</span>
-                  {s.label}
+                  {t(s.label)}
                 </Link>
               </li>
             ))}
@@ -259,7 +290,7 @@ export default function Navbar() {
                   className="block rounded-lg px-3 py-2.5 transition-colors hover:bg-zinc-900/5 hover:text-zinc-900"
                   onClick={() => setOpen(false)}
                 >
-                  {link.label}
+                  {t(link.label)}
                 </Link>
               </li>
             ))}
@@ -270,7 +301,7 @@ export default function Navbar() {
                 onClick={() => setOpen(false)}
                 className="block rounded-lg bg-zinc-900 px-3 py-2.5 text-center font-semibold text-white"
               >
-                Contact
+                {t("Contact")}
               </Link>
             </li>
           </ul>

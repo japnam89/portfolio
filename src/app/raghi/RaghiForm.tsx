@@ -1,16 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/components/LanguageProvider";
+
+type Language = "english" | "punjabi";
 
 export default function RaghiForm() {
+  const { t } = useLanguage();
+  const [language, setLanguage] = useState<Language>("english");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleDownload() {
+    const selectedLanguage = language;
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/raghi", { method: "POST" });
+      const res = await fetch(`/api/raghi?language=${selectedLanguage}`, {
+        method: "POST",
+      });
       if (!res.ok) {
         // Try to read an error message from JSON; fall back to status text.
         let msg: string;
@@ -23,13 +31,19 @@ export default function RaghiForm() {
         throw new Error(msg);
       }
 
+      const contentDisposition = res.headers.get("Content-Disposition");
+      const filename = contentDisposition?.match(/filename="([^"]+)"/i)?.[1];
+      if (!filename) {
+        throw new Error("The server did not provide a PDF filename.");
+      }
+
       // The response is a PDF — stream it into a blob and trigger a browser
       // download so the file lands on the user's machine.
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "ragi-list-this-month.pdf";
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -45,9 +59,34 @@ export default function RaghiForm() {
     <>
       {error && (
         <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          Couldn&apos;t fetch the Raghi list: {error}
+          {t("Couldn't fetch the Raghi list:")} {error}
         </div>
       )}
+      <div className="mt-6">
+        <label
+          htmlFor="raghi-language"
+          className="mb-2 block text-sm font-medium text-zinc-700"
+        >
+          {t("PDF language")}
+        </label>
+        <select
+          id="raghi-language"
+          value={language}
+          onChange={(event) => {
+            if (
+              event.target.value === "english" ||
+              event.target.value === "punjabi"
+            ) {
+              setLanguage(event.target.value);
+            }
+          }}
+          disabled={loading}
+          className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-60"
+        >
+          <option value="english">English</option>
+          <option value="punjabi">ਪੰਜਾਬੀ (Punjabi)</option>
+        </select>
+      </div>
       <button
         type="button"
         onClick={handleDownload}
@@ -60,14 +99,14 @@ export default function RaghiForm() {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            Downloading…
+            {t("Downloading…")}
           </>
         ) : (
           <>
             <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L19.5 15M21 10.5h-2.25A2.25 2.25 0 0016.5 8.25M19.5 15l-3-3M16.5 8.25H21" />
             </svg>
-            Download Raghi list of this month
+            {t("Download Raghi list")}
           </>
         )}
       </button>

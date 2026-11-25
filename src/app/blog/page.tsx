@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { listPosts, type Post } from "@/lib/blog";
 import { presignGet } from "@/lib/system-storage";
+import LocalizedText from "@/components/LocalizedText";
 
 export const metadata: Metadata = {
   title: "Blog — Japnam Singh",
@@ -69,22 +70,24 @@ export default async function Blog() {
       <div className="flex items-center justify-between">
         <h1 className="flex items-center gap-3 text-4xl font-bold tracking-tight">
           <span className="text-3xl">📝</span>
-          Blog
+          <LocalizedText text="Blog" />
         </h1>
         <Link
           href="/admin/posts/new"
           className="rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-700"
         >
-          New post
+          <LocalizedText text="New post" />
         </Link>
       </div>
       <p className="mt-4 text-lg text-zinc-600">
-        Occasional notes on cloud, engineering, and photography.
+        <LocalizedText text="Occasional notes on cloud, engineering, and photography." />
       </p>
 
       <div className="mt-10 space-y-8">
         {posts.length === 0 && (
-          <p className="text-zinc-500">No posts yet — publish one from the admin page.</p>
+          <p className="text-zinc-500">
+            <LocalizedText text="No posts yet — publish one from the admin page." />
+          </p>
         )}
         {posts.map((p, i) => (
           <article
@@ -114,7 +117,7 @@ export default async function Blog() {
               href={`/admin/posts/${p.slug}/edit`}
               className="mt-2 inline-block text-xs font-medium text-zinc-400 hover:text-zinc-700"
             >
-              Edit
+              <LocalizedText text="Edit" />
             </Link>
           </article>
         ))}

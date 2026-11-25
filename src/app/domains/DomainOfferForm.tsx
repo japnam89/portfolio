@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 // Inline offer form for a single domain. Posts to /api/domain-offers.
 export default function DomainOfferForm({ domain }: { domain: string }) {
+  const { t } = useLanguage();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [offer, setOffer] = useState("");
@@ -41,17 +43,17 @@ export default function DomainOfferForm({ domain }: { domain: string }) {
   if (status === "ok") {
     return (
       <p className="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-        ✅ Offer sent for <strong>{domain}</strong>. Thanks!
+        ✅ {t("Offer sent for")} <strong>{domain}</strong>. {t("Thanks!")}
       </p>
     );
   }
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-2">
-      <p className="text-xs font-medium text-zinc-500">Make an offer</p>
+      <p className="text-xs font-medium text-zinc-500">{t("Make an offer")}</p>
       <input
         required
-        placeholder="Your name"
+        placeholder={t("Your name")}
         value={name}
         onChange={(e) => setName(e.target.value)}
         className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
@@ -59,19 +61,19 @@ export default function DomainOfferForm({ domain }: { domain: string }) {
       <input
         required
         type="email"
-        placeholder="Your email"
+        placeholder={t("Your email")}
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
       />
       <input
-        placeholder="Offer amount (e.g. 2.5 ETH)"
+        placeholder={t("Offer amount (e.g. 2.5 ETH)")}
         value={offer}
         onChange={(e) => setOffer(e.target.value)}
         className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
       />
       <textarea
-        placeholder="Message (optional)"
+        placeholder={t("Message (optional)")}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         rows={2}
@@ -85,7 +87,7 @@ export default function DomainOfferForm({ domain }: { domain: string }) {
         disabled={status === "sending"}
         className="rounded-lg bg-zinc-900 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 disabled:opacity-60"
       >
-        {status === "sending" ? "Sending…" : "Send offer"}
+        {status === "sending" ? t("Sending…") : t("Send offer")}
       </button>
     </form>
   );

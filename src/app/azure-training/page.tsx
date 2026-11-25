@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 const FOCUS_AREAS = [
   "Landing Zones & Governance",
@@ -21,6 +22,7 @@ const TIMINGS = [
 ];
 
 export default function AzureTraining() {
+  const { t } = useLanguage();
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [message, setMessage] = useState("");
   const [focus, setFocus] = useState<string[]>([]);
@@ -56,12 +58,12 @@ export default function AzureTraining() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Request failed");
       setStatus("sent");
-      setMessage("Thanks! Your training enquiry is in — I'll get back to you shortly.");
+      setMessage(t("Thanks! Your training enquiry is in — I'll get back to you shortly."));
       form.reset();
       setFocus([]);
     } catch (err) {
       setStatus("error");
-      setMessage(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setMessage(err instanceof Error ? err.message : t("Something went wrong. Please try again."));
     }
   }
 
@@ -72,49 +74,47 @@ export default function AzureTraining() {
     <section className="mx-auto max-w-2xl px-6 py-20">
       <div className="flex items-center gap-3">
         <span className="text-3xl">🎓</span>
-        <h1 className="text-4xl font-bold tracking-tight">Azure 1:1 Training</h1>
+        <h1 className="text-4xl font-bold tracking-tight">{t("Azure 1:1 Training")}</h1>
       </div>
       <p className="mt-4 text-lg text-zinc-600">
-        Personal, hands-on coaching with a Staff Azure Architect. Tell me your
-        level and what you want to cover, and I&apos;ll tailor a session plan for
-        you.
+        {t("Personal, hands-on coaching with a Staff Azure Architect. Tell me your level and what you want to cover, and I'll tailor a session plan for you.")}
       </p>
 
       <form onSubmit={handleSubmit} className="mt-10 flex flex-col gap-5">
         <label className="flex flex-col gap-2 text-sm font-medium">
-          Name
-          <input name="name" required className={inputCls} placeholder="Your name" />
+          {t("Name")}
+          <input name="name" required className={inputCls} placeholder={t("Your name")} />
         </label>
 
         <label className="flex flex-col gap-2 text-sm font-medium">
-          Email
+          {t("Email")}
           <input
             name="email"
             type="email"
             required
             className={inputCls}
-            placeholder="you@example.com"
+            placeholder={t("Your email")}
           />
         </label>
 
         <label className="flex flex-col gap-2 text-sm font-medium">
-          Experience level
+          {t("Experience level")}
           <select name="level" defaultValue="" className={inputCls} required>
             <option value="" disabled>
-              Select your level…
+              {t("Select your level…")}
             </option>
             {LEVELS.map((l) => (
               <option key={l} value={l}>
-                {l}
+                {t(l)}
               </option>
             ))}
           </select>
         </label>
 
         <div className="flex flex-col gap-2 text-sm font-medium">
-          Focus areas
+          {t("Focus areas")}
           <p className="text-xs font-normal text-zinc-500">
-            Pick what you&apos;d like to cover (optional, multi-select).
+            {t("Pick what you'd like to cover (optional, multi-select).")}
           </p>
           <div className="flex flex-wrap gap-2">
             {FOCUS_AREAS.map((area) => {
@@ -130,7 +130,7 @@ export default function AzureTraining() {
                       : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
                   }`}
                 >
-                  {area}
+                  {t(area)}
                 </button>
               );
             })}
@@ -138,27 +138,27 @@ export default function AzureTraining() {
         </div>
 
         <label className="flex flex-col gap-2 text-sm font-medium">
-          Preferred timing
+          {t("Preferred timing")}
           <select name="timing" defaultValue="" className={inputCls} required>
             <option value="" disabled>
-              Select preferred timing…
+              {t("Select preferred timing…")}
             </option>
-            {TIMINGS.map((t) => (
-              <option key={t} value={t}>
-                {t}
+            {TIMINGS.map((timing) => (
+              <option key={timing} value={timing}>
+                {t(timing)}
               </option>
             ))}
           </select>
         </label>
 
         <label className="flex flex-col gap-2 text-sm font-medium">
-          Your goals / message
+          {t("Your goals / message")}
           <textarea
             name="message"
             required
             rows={5}
             className={inputCls}
-            placeholder="What do you want to achieve? Any specific topics, certs, or projects?"
+            placeholder={t("What do you want to achieve? Any specific topics, certs, or projects?")}
           />
         </label>
 
@@ -167,7 +167,7 @@ export default function AzureTraining() {
           disabled={status === "sending"}
           className="rounded-full bg-zinc-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {status === "sending" ? "Sending…" : "Send enquiry"}
+          {status === "sending" ? t("Sending…") : t("Send enquiry")}
         </button>
 
         {message && (

@@ -7,6 +7,7 @@ import { renderMarkdown } from "@/lib/markdown";
 import { presignGet } from "@/lib/system-storage";
 import PostAdminControls from "@/components/PostAdminControls";
 import ShareArticle from "@/components/ShareArticle";
+import LocalizedText from "@/components/LocalizedText";
 
 export const dynamic = "force-dynamic";
 
@@ -72,7 +73,7 @@ export default async function PostPage({
   return (
     <article className="mx-auto max-w-3xl px-6 py-20">
       <Link href="/blog" className="text-sm text-zinc-500 hover:text-zinc-900">
-        ← Back to blog
+        <LocalizedText text="← Back to blog" />
       </Link>
       <h1 className="mt-6 text-4xl font-bold tracking-tight">{post.title}</h1>
       <p className="mt-2 text-sm text-zinc-400">{formatDate(post.created_at)}</p>
@@ -98,7 +99,7 @@ export default async function PostPage({
       {related.length > 0 && (
         <section className="mt-16 border-t border-zinc-200 pt-8">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-500">
-            More from the blog
+            <LocalizedText text="More from the blog" />
           </h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {related.map((p) => (
