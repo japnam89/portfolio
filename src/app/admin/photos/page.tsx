@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import type {
+  PhotoCaptionFields,
+  PhotoCaptionTranslations,
+  TranslationLocale,
+} from "@/lib/content-types";
 
 // Admin page to edit photo captions (title/alt/location/date/description).
 // Lists photos from /api/photos and saves each via PUT /api/photos/[key]/meta,
@@ -14,6 +19,7 @@ type Caption = {
   location?: string;
   date?: string;
   description?: string;
+  translations?: PhotoCaptionTranslations;
 };
 
 type Photo = { key: string; src: string; caption?: Caption };
@@ -120,6 +126,13 @@ function PhotoEditor({
   const [location, setLocation] = useState(c?.location ?? "");
   const [date, setDate] = useState(c?.date ?? "");
   const [description, setDescription] = useState(c?.description ?? "");
+  const [translations, setTranslations] = useState<PhotoCaptionTranslations>(
+    c?.translations ?? {},
+  );
+  const locales: Array<{ code: TranslationLocale; label: string }> = [
+    { code: "hi", label: "Hindi" },
+    { code: "pa", label: "Punjabi" },
+  ];
 
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-5">
@@ -146,12 +159,34 @@ function PhotoEditor({
               className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
             />
           </label>
+          {locales.map(({ code, label }) => (
+            <fieldset key={code} className="space-y-3 rounded-xl border border-zinc-200 p-4">
+              <legend className="px-1 text-sm font-semibold text-zinc-700">
+                {label} translation
+              </legend>
+              <TranslatedCaptionFields
+                locale={code}
+                fields={translations[code] ?? {}}
+                onChange={(field, value) =>
+                  setTranslations((current) => ({
+                    ...current,
+                    [code]: { ...current[code], [field]: value },
+                  }))
+                }
+              />
+            </fieldset>
+          ))}
           <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={() =>
-                onSave(photo, { title, alt, location, date, description })
-              }
+              onClick={() => onSave(photo, {
+                title,
+                alt,
+                location,
+                date,
+                description,
+                translations,
+              })}
               className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700"
             >
               Save
@@ -182,5 +217,52 @@ function Field({
         className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
       />
     </label>
+  );
+}
+
+function TranslatedCaptionFields({
+  locale,
+  fields,
+  onChange,
+}: {
+  locale: TranslationLocale;
+  fields: PhotoCaptionFields;
+  onChange: (field: keyof PhotoCaptionFields, value: string) => void;
+}) {
+  return (
+    <>
+      <Field
+        label="Title"
+        value={fields.title ?? ""}
+        onChange={(value) => onChange("title", value)}
+      />
+      <Field
+        label="Alt text"
+        value={fields.alt ?? ""}
+        onChange={(value) => onChange("alt", value)}
+      />
+      <div className="grid grid-cols-2 gap-3">
+        <Field
+          label="Location"
+          value={fields.location ?? ""}
+          onChange={(value) => onChange("location", value)}
+        />
+        <Field
+          label="Date"
+          value={fields.date ?? ""}
+          onChange={(value) => onChange("date", value)}
+        />
+      </div>
+      <label className="block text-sm font-medium text-zinc-700">
+        Description
+        <textarea
+          value={fields.description ?? ""}
+          onChange={(e) => onChange("description", e.target.value)}
+          rows={3}
+          lang={locale}
+          className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
+        />
+      </label>
+    </>
   );
 }

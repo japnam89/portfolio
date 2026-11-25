@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
-import { upsertCaption, mergeCaption } from "@/lib/captions";
+import {
+  mergeCaption,
+  parseCaptionTranslations,
+  upsertCaption,
+} from "@/lib/captions";
 import { metaFor } from "@/data/photos";
+import type { PhotoCaptionTranslations } from "@/lib/content-types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -45,11 +50,27 @@ export async function PUT(
     location?: string;
     date?: string;
     description?: string;
+    translations?: PhotoCaptionTranslations;
   };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+  if (body.translations !== undefined) {
+    try {
+      body.translations = parseCaptionTranslations(body.translations);
+    } catch (error) {
+      return NextResponse.json(
+        {
+          error:
+            error instanceof Error
+              ? error.message
+              : "Invalid photo caption translations",
+        },
+        { status: 400 },
+      );
+    }
   }
   const updated = upsertCaption(key, body);
   return NextResponse.json({ key, caption: updated });

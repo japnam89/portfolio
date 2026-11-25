@@ -4,21 +4,22 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { metaFor } from "@/data/photos";
 import { useLanguage } from "./LanguageProvider";
+import type { PhotoMeta } from "@/data/photos";
+import type { Language } from "@/lib/translations";
 
-type Photo = { key: string; src: string; caption?: {
-  alt: string;
-  title?: string;
-  location?: string;
-  date?: string;
-  description?: string;
-} };
+type Photo = { key: string; src: string; caption?: PhotoMeta };
+
+function localizedCaption(caption: PhotoMeta, language: Language): PhotoMeta {
+  if (language === "en") return caption;
+  return { ...caption, ...caption.translations?.[language] };
+}
 
 // Client component: fetches presigned URLs from /api/photos, renders a
 // responsive grid with always-visible captions, and a click-to-zoom lightbox
 // showing the full metadata. Presigned URLs are short-lived, so it silently
 // re-fetches before they expire and on any load error.
 export default function PhotoGallery() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [active, setActive] = useState<Photo | null>(null);
   const [failed, setFailed] = useState<Record<string, boolean>>({});
@@ -83,7 +84,10 @@ export default function PhotoGallery() {
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {photos.map((photo) => {
-          const meta = photo.caption ?? metaFor(photo.key);
+          const meta = localizedCaption(
+            photo.caption ?? metaFor(photo.key),
+            language,
+          );
           const sub = [meta.location, meta.date].filter(Boolean).join(" · ");
           return (
             <button
@@ -125,7 +129,10 @@ export default function PhotoGallery() {
       </div>
 
       {active && (() => {
-        const meta = active.caption ?? metaFor(active.key);
+        const meta = localizedCaption(
+          active.caption ?? metaFor(active.key),
+          language,
+        );
         return (
         <div
           role="dialog"
